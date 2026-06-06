@@ -76,6 +76,11 @@ a {
   margin-bottom: 20px;
 }
 
+.current-view-panel {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
 .eyebrow {
   margin: 0;
   color: #5e731c;
@@ -98,6 +103,24 @@ a {
 
 .hero-actions {
   flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav-chip {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #3f4547;
+  cursor: pointer;
+}
+
+.nav-chip.active {
+  background: #101214;
+  color: #ffffff;
+  border-color: #101214;
 }
 
 .section-header {

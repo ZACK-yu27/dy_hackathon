@@ -1,96 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  buildExportUrl,
-  CATEGORY_OPTIONS,
-  fetchHealth,
-  fetchItems,
-  fetchWarnings,
-  uploadFile,
-} from "./api";
+import { buildExportUrl, CATEGORY_OPTIONS, fetchHealth, fetchItems, fetchWarnings, uploadFile } from "./api";
+import RecordList from "./components/RecordList";
+import SectionHeader from "./components/SectionHeader";
+import StatCard from "./components/StatCard";
+import { formatTime, getErrorMessage, INITIAL_FILTERS } from "./utils";
 
-const INITIAL_FILTERS = {
-  limit: 100,
-  category: "全部",
-  keyword: "",
-};
-
-function formatTime(value) {
-  if (!value) {
-    return "-";
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return date.toLocaleString("zh-CN", { hour12: false });
-}
-
-function getErrorMessage(error, fallback) {
-  if (!error) {
-    return fallback;
-  }
-
-  try {
-    const parsed = JSON.parse(error.message);
-    if (parsed?.detail) {
-      return parsed.detail;
-    }
-  } catch {
-    return error.message || fallback;
-  }
-
-  return error.message || fallback;
-}
-
-function StatCard({ label, value, hint }) {
-  return (
-    <div className="stat-card">
-      <span className="stat-label">{label}</span>
-      <strong className="stat-value">{value}</strong>
-      {hint ? <span className="stat-hint">{hint}</span> : null}
-    </div>
-  );
-}
-
-function SectionHeader({ title, description, actions }) {
-  return (
-    <div className="section-header">
-      <div>
-        <h2>{title}</h2>
-        {description ? <p>{description}</p> : null}
-      </div>
-      {actions ? <div className="section-actions">{actions}</div> : null}
-    </div>
-  );
-}
-
-function RecordList({ items, emptyText, renderMeta, renderExtra }) {
-  if (!items.length) {
-    return <div className="empty-state">{emptyText}</div>;
-  }
-
-  return (
-    <div className="record-list">
-      {items.map((item) => (
-        <article key={item.id} className="record-card">
-          <div className="record-top">
-            <span className="record-tag">{item.category}</span>
-            <span className="record-time">{formatTime(item.updated_at)}</span>
-          </div>
-          <h3>{item.name}</h3>
-          <p className="record-location">{item.location || "-"}</p>
-          <p className="record-summary">{item.summary}</p>
-          {renderMeta ? <div className="record-meta">{renderMeta(item)}</div> : null}
-          {renderExtra ? <div className="record-extra">{renderExtra(item)}</div> : null}
-        </article>
-      ))}
-    </div>
-  );
-}
+const VIEW_OPTIONS = [
+  {
+    id: "home",
+    label: "首页工作台",
+    description: "查看服务状态并上传新的攻略文件。",
+  },
+  {
+    id: "detail",
+    label: "项目详情",
+    description: "查看本次上传结果和结构化条目。",
+  },
+  {
+    id: "risk",
+    label: "避雷详情",
+    description: "查看 warning 命中历史与避雷说明。",
+  },
+];
 
 export default function App() {
+  const [activeView, setActiveView] = useState("home");
   const [health, setHealth] = useState(null);
   const [healthError, setHealthError] = useState("");
   const [loadingHealth, setLoadingHealth] = useState(true);
@@ -179,6 +113,7 @@ export default function App() {
       });
       setUploadResult(result);
       await Promise.all([loadItems(), loadWarnings()]);
+      setActiveView("detail");
     } catch (error) {
       setUploadError(getErrorMessage(error, "上传失败"));
     } finally {
@@ -204,6 +139,7 @@ export default function App() {
   );
 
   const uploadDisabled = uploading || loadingHealth || !health?.database_configured;
+  const activeViewMeta = VIEW_OPTIONS.find((view) => view.id === activeView) || VIEW_OPTIONS[0];
 
   return (
     <main className="page-shell">
@@ -217,228 +153,252 @@ export default function App() {
           </p>
         </div>
         <div className="hero-actions">
+          {VIEW_OPTIONS.map((view) => (
+            <button
+              key={view.id}
+              type="button"
+              className={view.id === activeView ? "nav-chip active" : "nav-chip"}
+              onClick={() => setActiveView(view.id)}
+            >
+              {view.label}
+            </button>
+          ))}
           <button type="button" className="secondary-button" onClick={loadHealth} disabled={loadingHealth}>
             {loadingHealth ? "检查中..." : "刷新服务状态"}
           </button>
         </div>
       </section>
 
-      <section className="panel">
-        <SectionHeader
-          title="服务状态"
-          description="必须先确认 FastAPI、MySQL 和 warning 种子同步状态正常，才能进入上传主流程。"
-        />
-        {healthError ? <div className="error-banner">{healthError}</div> : null}
-        <div className="stats-grid">
-          <StatCard label="服务状态" value={health?.status || (loadingHealth ? "加载中" : "-")} />
-          <StatCard label="服务名称" value={health?.service || "-"} />
-          <StatCard label="OCR 后端" value={health?.extraction_backend || "-"} />
-          <StatCard label="结构化模型" value={health?.structuring_model || "-"} />
-          <StatCard
-            label="数据库已配置"
-            value={health?.database_configured ? "是" : "否"}
-            hint={health?.warning_seed_file || ""}
-          />
-        </div>
+      <section className="panel current-view-panel">
+        <SectionHeader title={activeViewMeta.label} description={activeViewMeta.description} />
       </section>
 
-      <section className="panel">
-        <SectionHeader
-          title="创建并解析"
-          description="支持单张图片或 PDF 上传，处理耗时可能在 10 至 20 秒之间。"
-        />
-        <form className="upload-form" onSubmit={handleUpload}>
-          <label className="field">
-            <span>攻略文件</span>
-            <input
-              type="file"
-              accept=".png,.jpg,.jpeg,.webp,.pdf"
-              onChange={(event) => setSelectedFile(event.target.files?.[0] || null)}
+      {activeView === "home" && (
+        <>
+          <section className="panel">
+            <SectionHeader
+              title="服务状态"
+              description="必须先确认 FastAPI、MySQL 和 warning 种子同步状态正常，才能进入上传主流程。"
             />
-          </label>
-
-          <label className="field">
-            <span>补充上下文</span>
-            <textarea
-              rows="4"
-              placeholder="可选：补充城市、路线背景、截图来源等信息"
-              value={contextText}
-              onChange={(event) => setContextText(event.target.value)}
-            />
-          </label>
-
-          <div className="form-footer">
-            <div className="file-summary">
-              <span>{selectedFile ? selectedFile.name : "未选择文件"}</span>
+            {healthError ? <div className="error-banner">{healthError}</div> : null}
+            <div className="stats-grid">
+              <StatCard label="服务状态" value={health?.status || (loadingHealth ? "加载中" : "-")} />
+              <StatCard label="服务名称" value={health?.service || "-"} />
+              <StatCard label="OCR 后端" value={health?.extraction_backend || "-"} />
+              <StatCard label="结构化模型" value={health?.structuring_model || "-"} />
+              <StatCard
+                label="数据库已配置"
+                value={health?.database_configured ? "是" : "否"}
+                hint={health?.warning_seed_file || ""}
+              />
             </div>
-            <button type="submit" className="primary-button" disabled={uploadDisabled}>
-              {uploading ? "处理中..." : "创建并解析"}
+          </section>
+
+          <section className="panel">
+            <SectionHeader
+              title="创建并解析"
+              description="支持单张图片或 PDF 上传，处理耗时可能在 10 至 20 秒之间。"
+            />
+            <form className="upload-form" onSubmit={handleUpload}>
+              <label className="field">
+                <span>攻略文件</span>
+                <input
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.webp,.pdf"
+                  onChange={(event) => setSelectedFile(event.target.files?.[0] || null)}
+                />
+              </label>
+
+              <label className="field">
+                <span>补充上下文</span>
+                <textarea
+                  rows="4"
+                  placeholder="可选：补充城市、路线背景、截图来源等信息"
+                  value={contextText}
+                  onChange={(event) => setContextText(event.target.value)}
+                />
+              </label>
+
+              <div className="form-footer">
+                <div className="file-summary">
+                  <span>{selectedFile ? selectedFile.name : "未选择文件"}</span>
+                </div>
+                <button type="submit" className="primary-button" disabled={uploadDisabled}>
+                  {uploading ? "处理中..." : "创建并解析"}
+                </button>
+              </div>
+            </form>
+            {uploadError ? <div className="error-banner">{uploadError}</div> : null}
+          </section>
+        </>
+      )}
+
+      {activeView === "detail" && (
+        <>
+          <section className="panel">
+            <SectionHeader
+              title="本次上传结果"
+              description="展示本次调用返回的结构化数量、去重数量与 warning 命中情况。"
+            />
+            {!uploadResult ? (
+              <div className="empty-state">完成一次上传后，将在这里显示最新结果。</div>
+            ) : (
+              <>
+                <div className="stats-grid">
+                  <StatCard label="识别条目数" value={uploadResult.item_count} />
+                  <StatCard label="新增入库数" value={uploadResult.saved_count} />
+                  <StatCard label="去重数量" value={uploadResult.deduplicated_count} />
+                  <StatCard label="warning 命中数" value={uploadResult.warning_count} />
+                  <StatCard label="warning 新增数" value={uploadResult.warning_saved_count} />
+                </div>
+                <div className="result-columns">
+                  <div className="result-box">
+                    <h3>OCR 原文</h3>
+                    <pre>{uploadResult.extracted_text || "无文本内容"}</pre>
+                  </div>
+                  <div className="result-box">
+                    <h3>本次命中 warning</h3>
+                    <RecordList
+                      items={uploadResult.warnings || []}
+                      emptyText="本次上传未命中避雷库。"
+                      renderMeta={(item) => <span>匹配方式：{item.matched_by}</span>}
+                      renderExtra={(item) => (
+                        <ul className="pill-list">
+                          {(item.avoid_reasons || []).map((reason) => (
+                            <li key={reason}>{reason}</li>
+                          ))}
+                        </ul>
+                      )}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </section>
+
+          <section className="panel">
+            <SectionHeader
+              title="结构化结果"
+              description="可按分类和关键词筛选历史识别结果，并沿用筛选条件导出 JSON 或 CSV。"
+              actions={
+                <>
+                  <a className="ghost-link" href={itemExportJsonUrl} target="_blank" rel="noreferrer">
+                    导出 JSON
+                  </a>
+                  <a className="ghost-link" href={itemExportCsvUrl} target="_blank" rel="noreferrer">
+                    导出 CSV
+                  </a>
+                </>
+              }
+            />
+            <div className="filter-row">
+              <select
+                value={itemFilters.category}
+                onChange={(event) => setItemFilters((current) => ({ ...current, category: event.target.value }))}
+              >
+                {CATEGORY_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <input
+                value={itemFilters.keyword}
+                placeholder="搜索名称、地点、摘要"
+                onChange={(event) => setItemFilters((current) => ({ ...current, keyword: event.target.value }))}
+              />
+              <button type="button" className="secondary-button" onClick={() => loadItems()}>
+                手动刷新
+              </button>
+            </div>
+            <p className="helper-text">共 {itemsData.total} 条，按最新记录倒序展示。</p>
+            {itemsError ? <div className="error-banner">{itemsError}</div> : null}
+            {loadingItems ? (
+              <div className="empty-state">结构化结果加载中...</div>
+            ) : (
+              <RecordList
+                items={itemsData.items}
+                emptyText="暂无结构化结果。"
+                renderMeta={(item) => (
+                  <>
+                    <span>ID：{item.id}</span>
+                    <span>更新时间：{formatTime(item.updated_at)}</span>
+                  </>
+                )}
+              />
+            )}
+          </section>
+        </>
+      )}
+
+      {activeView === "risk" && (
+        <section className="panel">
+          <SectionHeader
+            title="避雷结果"
+            description="查看历史 warning 命中结果，并为后续避雷详情页提供真实数据来源。"
+            actions={
+              <>
+                <a className="ghost-link" href={warningExportJsonUrl} target="_blank" rel="noreferrer">
+                  导出 JSON
+                </a>
+                <a className="ghost-link" href={warningExportCsvUrl} target="_blank" rel="noreferrer">
+                  导出 CSV
+                </a>
+              </>
+            }
+          />
+          <div className="filter-row">
+            <select
+              value={warningFilters.category}
+              onChange={(event) =>
+                setWarningFilters((current) => ({ ...current, category: event.target.value }))
+              }
+            >
+              {CATEGORY_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            <input
+              value={warningFilters.keyword}
+              placeholder="搜索名称、地点、摘要、warning 文案"
+              onChange={(event) =>
+                setWarningFilters((current) => ({ ...current, keyword: event.target.value }))
+              }
+            />
+            <button type="button" className="secondary-button" onClick={() => loadWarnings()}>
+              手动刷新
             </button>
           </div>
-        </form>
-        {uploadError ? <div className="error-banner">{uploadError}</div> : null}
-      </section>
-
-      <section className="panel">
-        <SectionHeader
-          title="本次上传结果"
-          description="展示本次调用返回的结构化数量、去重数量与 warning 命中情况。"
-        />
-        {!uploadResult ? (
-          <div className="empty-state">完成一次上传后，将在这里显示最新结果。</div>
-        ) : (
-          <>
-            <div className="stats-grid">
-              <StatCard label="识别条目数" value={uploadResult.item_count} />
-              <StatCard label="新增入库数" value={uploadResult.saved_count} />
-              <StatCard label="去重数量" value={uploadResult.deduplicated_count} />
-              <StatCard label="warning 命中数" value={uploadResult.warning_count} />
-              <StatCard label="warning 新增数" value={uploadResult.warning_saved_count} />
-            </div>
-            <div className="result-columns">
-              <div className="result-box">
-                <h3>OCR 原文</h3>
-                <pre>{uploadResult.extracted_text || "无文本内容"}</pre>
-              </div>
-              <div className="result-box">
-                <h3>本次命中 warning</h3>
-                <RecordList
-                  items={uploadResult.warnings || []}
-                  emptyText="本次上传未命中避雷库。"
-                  renderMeta={(item) => <span>匹配方式：{item.matched_by}</span>}
-                  renderExtra={(item) => (
-                    <ul className="pill-list">
-                      {(item.avoid_reasons || []).map((reason) => (
-                        <li key={reason}>{reason}</li>
-                      ))}
-                    </ul>
-                  )}
-                />
-              </div>
-            </div>
-          </>
-        )}
-      </section>
-
-      <section className="panel">
-        <SectionHeader
-          title="结构化结果"
-          description="可按分类和关键词筛选历史识别结果，并沿用筛选条件导出 JSON 或 CSV。"
-          actions={
-            <>
-              <a className="ghost-link" href={itemExportJsonUrl} target="_blank" rel="noreferrer">
-                导出 JSON
-              </a>
-              <a className="ghost-link" href={itemExportCsvUrl} target="_blank" rel="noreferrer">
-                导出 CSV
-              </a>
-            </>
-          }
-        />
-        <div className="filter-row">
-          <select
-            value={itemFilters.category}
-            onChange={(event) => setItemFilters((current) => ({ ...current, category: event.target.value }))}
-          >
-            {CATEGORY_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          <input
-            value={itemFilters.keyword}
-            placeholder="搜索名称、地点、摘要"
-            onChange={(event) => setItemFilters((current) => ({ ...current, keyword: event.target.value }))}
-          />
-          <button type="button" className="secondary-button" onClick={() => loadItems()}>
-            手动刷新
-          </button>
-        </div>
-        <p className="helper-text">共 {itemsData.total} 条，按最新记录倒序展示。</p>
-        {itemsError ? <div className="error-banner">{itemsError}</div> : null}
-        {loadingItems ? (
-          <div className="empty-state">结构化结果加载中...</div>
-        ) : (
-          <RecordList
-            items={itemsData.items}
-            emptyText="暂无结构化结果。"
-            renderMeta={(item) => (
-              <>
-                <span>ID：{item.id}</span>
-                <span>更新时间：{formatTime(item.updated_at)}</span>
-              </>
-            )}
-          />
-        )}
-      </section>
-
-      <section className="panel">
-        <SectionHeader
-          title="避雷结果"
-          description="查看历史 warning 命中结果，并为后续避雷详情页提供真实数据来源。"
-          actions={
-            <>
-              <a className="ghost-link" href={warningExportJsonUrl} target="_blank" rel="noreferrer">
-                导出 JSON
-              </a>
-              <a className="ghost-link" href={warningExportCsvUrl} target="_blank" rel="noreferrer">
-                导出 CSV
-              </a>
-            </>
-          }
-        />
-        <div className="filter-row">
-          <select
-            value={warningFilters.category}
-            onChange={(event) =>
-              setWarningFilters((current) => ({ ...current, category: event.target.value }))
-            }
-          >
-            {CATEGORY_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          <input
-            value={warningFilters.keyword}
-            placeholder="搜索名称、地点、摘要、warning 文案"
-            onChange={(event) =>
-              setWarningFilters((current) => ({ ...current, keyword: event.target.value }))
-            }
-          />
-          <button type="button" className="secondary-button" onClick={() => loadWarnings()}>
-            手动刷新
-          </button>
-        </div>
-        <p className="helper-text">共 {warningsData.total} 条，支持分类筛选和关键词检索。</p>
-        {warningsError ? <div className="error-banner">{warningsError}</div> : null}
-        {loadingWarnings ? (
-          <div className="empty-state">避雷结果加载中...</div>
-        ) : (
-          <RecordList
-            items={warningsData.items}
-            emptyText="暂无避雷结果。"
-            renderMeta={(item) => (
-              <>
-                <span>结构化记录 ID：{item.structured_item_id}</span>
-                <span>匹配方式：{item.matched_by}</span>
-              </>
-            )}
-            renderExtra={(item) => (
-              <div className="warning-detail">
-                <p>{item.warning_summary}</p>
-                <ul className="pill-list">
-                  {(item.execution_tips || []).map((tip) => (
-                    <li key={tip}>{tip}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          />
-        )}
-      </section>
+          <p className="helper-text">共 {warningsData.total} 条，支持分类筛选和关键词检索。</p>
+          {warningsError ? <div className="error-banner">{warningsError}</div> : null}
+          {loadingWarnings ? (
+            <div className="empty-state">避雷结果加载中...</div>
+          ) : (
+            <RecordList
+              items={warningsData.items}
+              emptyText="暂无避雷结果。"
+              renderMeta={(item) => (
+                <>
+                  <span>结构化记录 ID：{item.structured_item_id}</span>
+                  <span>匹配方式：{item.matched_by}</span>
+                </>
+              )}
+              renderExtra={(item) => (
+                <div className="warning-detail">
+                  <p>{item.warning_summary}</p>
+                  <ul className="pill-list">
+                    {(item.execution_tips || []).map((tip) => (
+                      <li key={tip}>{tip}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            />
+          )}
+        </section>
+      )}
     </main>
   );
 }
