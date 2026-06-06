@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.vite/
+*.log
+dy_hackathon_repo/
+dy_hackathon_main/
+outputs/

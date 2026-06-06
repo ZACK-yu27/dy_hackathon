@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, .9), transparent 24%),
+    linear-gradient(135deg, #eeeeea, #c8c9c4 52%, #aeb0b5);
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+button {
+  font: inherit;
+}
+
+.demo-stage {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: start center;
+  padding: 0;
+}
+
+.reference-screen {
+  position: relative;
+  width: min(100vw, 432px);
+  aspect-ratio: 864 / 1824;
+  overflow: hidden;
+  background: #d7d7cc;
+  box-shadow: 0 22px 72px rgba(5, 5, 5, .18);
+}
+
+.reference-screen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.hotspot {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.hotspot:focus-visible {
+  outline: 2px solid rgba(199, 216, 58, .9);
+  outline-offset: 2px;
+  background: rgba(199, 216, 58, .16);
+}
+
+.toast {
+  position: fixed;
+  z-index: 10;
+  left: 50%;
+  bottom: 9vh;
+  transform: translateX(-50%);
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: #050505;
+  color: #c7d83a;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .28);
+  white-space: nowrap;
+}
+
+@media (min-width: 700px) {
+  .demo-stage {
+    padding: 18px 0;
+  }
+
+  .reference-screen {
+    border-radius: 28px;
+  }
+}
