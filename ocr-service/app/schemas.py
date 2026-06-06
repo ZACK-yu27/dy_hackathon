@@ -1,35 +1,58 @@
+from __future__ import annotations
+
+from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+
+ALLOWED_CATEGORIES = {"景点", "饮食", "交通", "住宿"}
 
 
-class OCRLine(BaseModel):
-    text: str
-    score: float | None = None
-    bbox: list[list[float]] = Field(default_factory=list)
+class StructuredItemInput(BaseModel):
+    category: str
+    name: str
+    location: str
+    summary: str
+
+    @field_validator("category")
+    @classmethod
+    def validate_category(cls, value: str) -> str:
+        normalized = value.strip()
+        if normalized not in ALLOWED_CATEGORIES:
+            raise ValueError(f"Invalid category: {value}")
+        return normalized
+
+    @field_validator("name", "location", "summary")
+    @classmethod
+    def validate_text_fields(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("Field cannot be empty.")
+        return normalized
 
 
-class OCRPage(BaseModel):
-    page_number: int
-    text: str
-    lines: list[OCRLine] = Field(default_factory=list)
+class StructuredItemRecord(StructuredItemInput):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
 
 
-class OCRResult(BaseModel):
-    status: Literal["success", "partial_success", "failed"]
+class KimiExtractionResult(BaseModel):
+    extracted_text: str
+    file_id: str | None = None
+
+
+class UploadIngestResponse(BaseModel):
+    status: Literal["success"]
     file_name: str
     file_type: Literal["image", "pdf"]
-    language: str
-    elapsed_ms: int
-    page_count: int
-    pages: list[OCRPage] = Field(default_factory=list)
-    warnings: list[str] = Field(default_factory=list)
+    extracted_text: str
+    item_count: int
+    items: list[StructuredItemRecord] = Field(default_factory=list)
 
 
-class BatchOCRResult(BaseModel):
-    status: Literal["success", "partial_success", "failed"]
-    total_files: int
-    success_count: int
-    failure_count: int
-    elapsed_ms: int
-    results: list[OCRResult] = Field(default_factory=list)
+class ListStructuredItemsResponse(BaseModel):
+    total: int
+    items: list[StructuredItemRecord] = Field(default_factory=list)

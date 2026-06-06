@@ -1,0 +1,144 @@
+{
+  "base_url": "http://127.0.0.1:8012",
+  "health": {
+    "status_code": 200,
+    "body": {
+      "status": "ok",
+      "service": "Travel Structured Ingestion Service",
+      "port": 8012,
+      "model": "kimi-for-coding",
+      "database_configured": true
+    }
+  },
+  "before_db": {
+    "max_id": 0,
+    "total": 0
+  },
+  "after_db": {
+    "max_id": 0,
+    "total": 0
+  },
+  "inserted_rows": [],
+  "request_count": 9,
+  "success_count": 0,
+  "failure_count": 9,
+  "results": [
+    {
+      "file_name": "微信图片_20260606194611_493_141.jpg",
+      "started_at": "2026-06-06T19:56:55",
+      "elapsed_seconds": 6.108,
+      "status_code": 500,
+      "response": {
+        "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1p5b8obbi11gt7yii/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+      },
+      "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1p5b8obbi11gt7yii/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+      "item_count": 0,
+      "extracted_text_length": 0,
+      "extracted_text_preview": ""
+    },
+    {
+      "file_name": "微信图片_20260606194613_494_141.jpg",
+      "started_at": "2026-06-06T19:57:01",
+      "elapsed_seconds": 6.301,
+      "status_code": 500,
+      "response": {
+        "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1p6tfxy5i11g4o6j1/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+      },
+      "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1p6tfxy5i11g4o6j1/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+      "item_count": 0,
+      "extracted_text_length": 0,
+      "extracted_text_preview": ""
+    },
+    {
+      "file_name": "微信图片_20260606194617_495_141.jpg",
+      "started_at": "2026-06-06T19:57:07",
+      "elapsed_seconds": 6.163,
+      "status_code": 500,
+      "response": {
+        "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1p8d1nmk111b4b4e1/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+      },
+      "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1p8d1nmk111b4b4e1/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+      "item_count": 0,
+      "extracted_text_length": 0,
+      "extracted_text_preview": ""
+    },
+    {
+      "file_name": "微信图片_20260606194622_496_141.jpg",
+      "started_at": "2026-06-06T19:57:13",
+      "elapsed_seconds": 6.021,
+      "status_code": 500,
+      "response": {
+        "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1p9w3q8ji11fgop81/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+      },
+      "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1p9w3q8ji11fgop81/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+      "item_count": 0,
+      "extracted_text_length": 0,
+      "extracted_text_preview": ""
+    },
+    {
+      "file_name": "微信图片_20260606194631_497_141.jpg",
+      "started_at": "2026-06-06T19:57:19",
+      "elapsed_seconds": 5.804,
+      "status_code": 500,
+      "response": {
+        "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1pbbr5zai11dby6di/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+      },
+      "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1pbbr5zai11dby6di/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+      "item_count": 0,
+      "extracted_text_length": 0,
+      "extracted_text_preview": ""
+    },
+    {
+      "file_name": "微信图片_20260606194637_498_141.jpg",
+      "started_at": "2026-06-06T19:57:25",
+      "elapsed_seconds": 5.94,
+      "status_code": 500,
+      "response": {
+        "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1pcuqfeh111dcut4i/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+      },
+      "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1pcuqfeh111dcut4i/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+      "item_count": 0,
+      "extracted_text_length": 0,
+      "extracted_text_preview": ""
+    },
+    {
+      "file_name": "微信图片_20260606194639_499_141.jpg",
+      "started_at": "2026-06-06T19:57:31",
+      "elapsed_seconds": 5.68,
+      "status_code": 500,
+      "response": {
+        "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1pegxoiz111c99da1/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+      },
+      "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1pegxoiz111c99da1/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+      "item_count": 0,
+      "extracted_text_length": 0,
+      "extracted_text_preview": ""
+    },
+    {
+      "file_name": "微信图片_20260606194641_500_141.jpg",
+      "started_at": "2026-06-06T19:57:37",
+      "elapsed_seconds": 5.982,
+      "status_code": 500,
+      "response": {
+        "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1pfssd1si11b755yi/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+      },
+      "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1pfssd1si11b755yi/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+      "item_count": 0,
+      "extracted_text_length": 0,
+      "extracted_text_preview": ""
+    },
+    {
+      "file_name": "微信图片_20260606194643_501_141.jpg",
+      "started_at": "2026-06-06T19:57:43",
+      "elapsed_seconds": 6.064,
+      "status_code": 500,
+      "response": {
+        "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1phdaa6ki11hubwui/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+      },
+      "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1phdaa6ki11hubwui/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+      "item_count": 0,
+      "extracted_text_length": 0,
+      "extracted_text_preview": ""
+    }
+  ]
+}
