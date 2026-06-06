@@ -1,0 +1,7 @@
+INFO:     Started server process [46788]
+INFO:     Waiting for application startup.
+2026-06-07 00:12:46,487 | INFO | app.main | MySQL tables are ready.
+2026-06-07 00:12:46,496 | INFO | app.main | Warning source seed completed, created=0
+2026-06-07 00:12:46,504 | INFO | app.main | Ingestion service started on port 8011
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8011 (Press CTRL+C to quit)
