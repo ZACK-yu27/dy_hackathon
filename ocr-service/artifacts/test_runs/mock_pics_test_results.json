@@ -1,0 +1,985 @@
+{
+  "base_url": "http://127.0.0.1:8015",
+  "health": {
+    "status_code": 200,
+    "body": {
+      "status": "ok",
+      "service": "Travel Structured Ingestion Service",
+      "port": 8015,
+      "extraction_backend": "local_tesseract",
+      "ocr_language": "chi_sim+eng",
+      "structuring_model": "deepseek-v4-flash",
+      "database_configured": true
+    }
+  },
+  "before_db": {
+    "max_id": 60,
+    "total": 60
+  },
+  "after_db": {
+    "max_id": 109,
+    "total": 109
+  },
+  "inserted_rows": [
+    {
+      "id": 61,
+      "category": "景点",
+      "name": "广东省博物馆",
+      "location": "广州市天河区",
+      "summary": "广东省博物馆是了解岭南文化的重要场所，馆藏丰富。"
+    },
+    {
+      "id": 62,
+      "category": "景点",
+      "name": "陈家祠",
+      "location": "广州市荔湾区",
+      "summary": "陈家祠是岭南建筑艺术的代表，被誉为“月光宝盒”。"
+    },
+    {
+      "id": 63,
+      "category": "景点",
+      "name": "白云山",
+      "location": "广州市白云区",
+      "summary": "白云山是广州的城市绿肺，适合登山和休闲。"
+    },
+    {
+      "id": 64,
+      "category": "景点",
+      "name": "荔湾湖公园",
+      "location": "广州市荔湾区",
+      "summary": "荔湾湖公园是广州的“城市客厅”，适合漫步和赏景。"
+    },
+    {
+      "id": 65,
+      "category": "景点",
+      "name": "广州塔",
+      "location": "广州市海珠区",
+      "summary": "广州塔昵称“小蛮腰”，是广州地标，可俯瞰珠江夜景。"
+    },
+    {
+      "id": 66,
+      "category": "景点",
+      "name": "圣心大教堂",
+      "location": "广州市越秀区",
+      "summary": "圣心大教堂是广州著名的天主教堂，建筑风格独特。"
+    },
+    {
+      "id": 67,
+      "category": "景点",
+      "name": "北京路步行街",
+      "location": "广州市越秀区",
+      "summary": "北京路步行街是广州繁华的商业街，适合购物和美食。"
+    },
+    {
+      "id": 68,
+      "category": "交通",
+      "name": "珠江夜游",
+      "location": "广州市",
+      "summary": "珠江夜游是广州特色游览项目，可欣赏两岸灯光夜景。"
+    },
+    {
+      "id": 69,
+      "category": "景点",
+      "name": "陈家祠",
+      "location": "广州市荔湾区中山七路",
+      "summary": "陈家祠是岭南建筑艺术的明珠，开放时间为9:00-17:30。"
+    },
+    {
+      "id": 70,
+      "category": "景点",
+      "name": "沙面岛",
+      "location": "广州市荔湾区沙面南街",
+      "summary": "沙面岛是典型的岭南园林风格景点，全天开放。"
+    },
+    {
+      "id": 71,
+      "category": "景点",
+      "name": "永庆坊",
+      "location": "广州市荔湾区恩宁路",
+      "summary": "永庆坊是在百年骑楼基础上改造的文创街区，全天开放。"
+    },
+    {
+      "id": 72,
+      "category": "景点",
+      "name": "南越王博物院",
+      "location": "广州市越秀区解放北路867号",
+      "summary": "南越王博物院展示南越国历史文物，是了解广州古代文化的重要场所。"
+    },
+    {
+      "id": 73,
+      "category": "景点",
+      "name": "流花湖公园",
+      "location": "广州市越秀区流花路100号",
+      "summary": "流花湖公园以湖光水色和园林景观为特色，适合休闲散步和拍照。"
+    },
+    {
+      "id": 74,
+      "category": "景点",
+      "name": "光孝寺",
+      "location": "广州市越秀区光孝路109号",
+      "summary": "光孝寺是广州最古老的佛教寺庙之一，建筑古朴，环境清幽。"
+    },
+    {
+      "id": 75,
+      "category": "景点",
+      "name": "中山纪念堂",
+      "location": "广州市越秀区东风中路259号",
+      "summary": "中山纪念堂是广州地标建筑，中式风格宏伟壮观，适合参观和拍照。"
+    },
+    {
+      "id": 76,
+      "category": "景点",
+      "name": "石室圣心大教堂",
+      "location": "广州市越秀区一德路旧部前56号",
+      "summary": "石室圣心大教堂是广州著名天主教堂，双塔建筑和彩色玻璃窗极具特色。"
+    },
+    {
+      "id": 77,
+      "category": "景点",
+      "name": "农讲所",
+      "location": "广州市越秀区中山四路42号",
+      "summary": "农讲所是毛泽东主办的农民运动讲习所旧址，红色旅游景点，免费开放。"
+    },
+    {
+      "id": 78,
+      "category": "景点",
+      "name": "花城广场",
+      "location": "广州市天河区",
+      "summary": "花城广场被誉为广州的城市客厅，适合漫步和欣赏城市景观。"
+    },
+    {
+      "id": 79,
+      "category": "景点",
+      "name": "广州塔",
+      "location": "广州市海珠区阅江西路222号",
+      "summary": "广州塔是广州的城市地标，开放时间为18:30-22:00，门票60元起。"
+    },
+    {
+      "id": 80,
+      "category": "景点",
+      "name": "海心沙",
+      "location": "广州市天河区珠江新城",
+      "summary": "海心沙是亚运会开闭幕式的举办地，全天开放。"
+    },
+    {
+      "id": 81,
+      "category": "景点",
+      "name": "广州图书馆",
+      "location": "广州市天河区珠江东路4号",
+      "summary": "广州图书馆开放时间为9:00-17:00，周二闭馆。"
+    },
+    {
+      "id": 82,
+      "category": "景点",
+      "name": "天德广场",
+      "location": "广州市天河区临江大道",
+      "summary": "天德广场全天开放，适合休闲游览。"
+    },
+    {
+      "id": 83,
+      "category": "景点",
+      "name": "花城公园",
+      "location": "广州市天河区花城大道",
+      "summary": "花城公园开放时间为9:00-23:00，适合散步休闲。"
+    },
+    {
+      "id": 84,
+      "category": "景点",
+      "name": "白云山",
+      "location": "广州市白云区",
+      "summary": "白云山是广州的“市肺”，适合登山和自然观光，南门门票5元。"
+    },
+    {
+      "id": 85,
+      "category": "景点",
+      "name": "云溪植物园",
+      "location": "广州市白云区白云山山麓",
+      "summary": "云溪植物园位于白云山山麓，以植物景观和生态体验为特色。"
+    },
+    {
+      "id": 86,
+      "category": "住宿",
+      "name": "天河区珠江新城/体育西",
+      "location": "广州市天河区珠江新城/体育西",
+      "summary": "靠近花城广场、广州塔等商业地标，逛街购物和夜景观赏极为便利。"
+    },
+    {
+      "id": 87,
+      "category": "住宿",
+      "name": "越秀区北京路/海珠广场",
+      "location": "广州市越秀区北京路/海珠广场",
+      "summary": "拥有北京路步行街、大佛寺等历史文化景点，适合体验老城韵味。"
+    },
+    {
+      "id": 88,
+      "category": "住宿",
+      "name": "荔湾区上下九/沙面",
+      "location": "广州市荔湾区上下九/沙面",
+      "summary": "地道美食和骑楼建筑云集，适合喜欢慢节奏和烟火气的游客。"
+    },
+    {
+      "id": 89,
+      "category": "住宿",
+      "name": "广州白云国际机场附近",
+      "location": "广州市花都区广州白云国际机场附近",
+      "summary": "适合深夜抵达或清晨出发的游客，交通中转方便，节省路途时间。"
+    },
+    {
+      "id": 90,
+      "category": "住宿",
+      "name": "海珠区琶洲/江南西",
+      "location": "广州市海珠区琶洲/江南西",
+      "summary": "靠近广交会展馆，江南西商圈生活气息浓厚，地铁线路密集。"
+    },
+    {
+      "id": 91,
+      "category": "交通",
+      "name": "广州白云国际机场",
+      "location": "广州市白云区",
+      "summary": "广州白云国际机场距市中心约30公里，有机场大巴和地铁直达市区。"
+    },
+    {
+      "id": 92,
+      "category": "交通",
+      "name": "空港快线1号线",
+      "location": "广州市-白云区-广州火车站",
+      "summary": "空港快线1号线从机场直达广州火车站，车程约45分钟，票价22元。"
+    },
+    {
+      "id": 93,
+      "category": "交通",
+      "name": "海珠广场线",
+      "location": "广州市-越秀区-北京路",
+      "summary": "海珠广场线从机场直达北京路商圈，车程约50分钟，票价25元。"
+    },
+    {
+      "id": 94,
+      "category": "交通",
+      "name": "地铁3号线北延段",
+      "location": "广州市-天河区-体育西路/珠江新城",
+      "summary": "地铁3号线北延段直达体育西路和珠江新城，车程约45分钟，票价7-10元。"
+    },
+    {
+      "id": 95,
+      "category": "交通",
+      "name": "广州南站",
+      "location": "广州市-番禺区-广州南站",
+      "summary": "广州南站可乘地铁2/7/22号线直达市区，车程约30分钟。"
+    },
+    {
+      "id": 96,
+      "category": "交通",
+      "name": "广州站",
+      "location": "广州市-越秀区-广州站",
+      "summary": "广州站可乘地铁2/5号线直达，步行10分钟到越秀公园。"
+    },
+    {
+      "id": 97,
+      "category": "交通",
+      "name": "广州东站",
+      "location": "广州市-天河区-广州东站",
+      "summary": "广州东站可乘地铁1/3/18号线直达，15分钟到珠江新城。"
+    },
+    {
+      "id": 98,
+      "category": "交通",
+      "name": "广州地铁",
+      "location": "广州市",
+      "summary": "广州地铁已开通1-22号线及广佛线，覆盖所有核心景点，支持支付宝乘车码。"
+    },
+    {
+      "id": 99,
+      "category": "交通",
+      "name": "广州公交",
+      "location": "广州市",
+      "summary": "广州公交线路密集，覆盖偏远景点和老城区小巷，票价2元起。"
+    },
+    {
+      "id": 100,
+      "category": "交通",
+      "name": "出租车/网约车",
+      "location": "广州市",
+      "summary": "广州出租车起步价12元，老城区窄巷多，高峰期建议优先选地铁。"
+    },
+    {
+      "id": 101,
+      "category": "交通",
+      "name": "水上巴士",
+      "location": "广州市-珠江沿线",
+      "summary": "广州水上巴士是珠江沿线特色交通，票价2-3元，可顺路看江景。"
+    },
+    {
+      "id": 102,
+      "category": "饮食",
+      "name": "牛杂店",
+      "location": "广州市-未明确区域",
+      "summary": "这家牛杂店料足味美，里面满满牛杂，还加新鲜牛肉，非常好吃。"
+    },
+    {
+      "id": 103,
+      "category": "饮食",
+      "name": "糖水店",
+      "location": "广州市-未明确区域",
+      "summary": "这家糖水店种类多，人均十几块，招牌杨枝甘露料很足。"
+    },
+    {
+      "id": 104,
+      "category": "饮食",
+      "name": "百年老字号茶楼",
+      "location": "广州市-未明确区域",
+      "summary": "广州百年老字号茶楼，可听粤曲喝早茶，本地人常来，点心丰富。"
+    },
+    {
+      "id": 105,
+      "category": "饮食",
+      "name": "英姐鲜奶",
+      "location": "广州市-未明确区域",
+      "summary": "英姐鲜奶新鲜现做，招牌双皮奶和牛奶奶味浓郁，口感顺滑。"
+    },
+    {
+      "id": 106,
+      "category": "饮食",
+      "name": "牛杂店",
+      "location": "广州市-未明确区域",
+      "summary": "牛杂店用料丰富，有牛杂和新鲜牛肉，味道鲜美，价格实惠。"
+    },
+    {
+      "id": 107,
+      "category": "饮食",
+      "name": "糖水店",
+      "location": "广州市-未明确区域",
+      "summary": "糖水店种类多，人均十几块，招牌杨枝甘露料很足。"
+    },
+    {
+      "id": 108,
+      "category": "饮食",
+      "name": "百年老字号茶楼",
+      "location": "广州市-未明确区域",
+      "summary": "百年老字号茶楼可听粤曲喝早茶，本地人多，点心精致。"
+    },
+    {
+      "id": 109,
+      "category": "饮食",
+      "name": "英姐鲜奶",
+      "location": "广州市-未明确区域",
+      "summary": "英姐鲜奶新鲜现做，招牌双皮奶和牛奶奶味浓郁，口感顺滑。"
+    }
+  ],
+  "request_count": 9,
+  "success_count": 9,
+  "failure_count": 0,
+  "results": [
+    {
+      "file_name": "微信图片_20260606194611_493_141.jpg",
+      "started_at": "2026-06-06T20:21:14",
+      "elapsed_seconds": 19.048,
+      "status_code": 200,
+      "response": {
+        "status": "success",
+        "file_name": "微信图片_20260606194611_493_141.jpg",
+        "file_type": "image",
+        "extracted_text": "唐 州 可 分 为 四 人 板块 游玩\nHAS A\n8 ~ NAN? Beene\n天\n@ pe =\no? ‘ a 省 博物 馆 A)\n人 广东 本 和 丰\nNV] nan? Seer: Orneewn\nDAY1 陈 家 福 EE if 月 光 宝 盒 ” 造\n南 建筑 艺 启 州 白云 万 法 明\nJ 岭南 @ ZN\n> wea 0° Oar ie iy Onze\n了 人 荔湾 湖 公园 .-° . 州 的 “城市 客厅 \"\n” 4? MERGE\nAU 9 Se’ |. i Visow\n1 APSE 和 % 2010S Tia Ft 7\n| ay ae |\n6 é 0 州 塔 4\nQe 和 ‘ vr “)\\\\ 25 iE\" .\nLoe REV ® 呢 称 “小 变 腰 “ 必 wie\n\\ ee tam aN 珠江 夜 游 ”\nNome Wy Pe ~ els | tiie °\naN se we -- DAY3}. 人\n‘ : eo?” 8 Y) Ki\nLa - ee Nag 一 DAY4\nTREE 人 19 、\nhit RE i\nRO s Ol = se Set o,°\nfe estas fe, © 8 EZ ae\nET A evan\neo ry PS  *s Tussi ;\n圣 心 大 教 党 \"3. Nie &\nES 下 于 Lie 本 =}\na Tete. , wi\n国 ae é\nvA PS AS iil ‘) a6\nCia ') | |\nway Enlai hrs | |\n3509\nmy Lee a\n北京 路 步行 竺 人 sce?",
+        "item_count": 8,
+        "items": [
+          {
+            "category": "景点",
+            "name": "广东省博物馆",
+            "location": "广州市天河区",
+            "summary": "广东省博物馆是了解岭南文化的重要场所，馆藏丰富。",
+            "id": 61,
+            "created_at": "2026-06-06T20:21:33",
+            "updated_at": "2026-06-06T20:21:33"
+          },
+          {
+            "category": "景点",
+            "name": "陈家祠",
+            "location": "广州市荔湾区",
+            "summary": "陈家祠是岭南建筑艺术的代表，被誉为“月光宝盒”。",
+            "id": 62,
+            "created_at": "2026-06-06T20:21:33",
+            "updated_at": "2026-06-06T20:21:33"
+          },
+          {
+            "category": "景点",
+            "name": "白云山",
+            "location": "广州市白云区",
+            "summary": "白云山是广州的城市绿肺，适合登山和休闲。",
+            "id": 63,
+            "created_at": "2026-06-06T20:21:33",
+            "updated_at": "2026-06-06T20:21:33"
+          },
+          {
+            "category": "景点",
+            "name": "荔湾湖公园",
+            "location": "广州市荔湾区",
+            "summary": "荔湾湖公园是广州的“城市客厅”，适合漫步和赏景。",
+            "id": 64,
+            "created_at": "2026-06-06T20:21:33",
+            "updated_at": "2026-06-06T20:21:33"
+          },
+          {
+            "category": "景点",
+            "name": "广州塔",
+            "location": "广州市海珠区",
+            "summary": "广州塔昵称“小蛮腰”，是广州地标，可俯瞰珠江夜景。",
+            "id": 65,
+            "created_at": "2026-06-06T20:21:33",
+            "updated_at": "2026-06-06T20:21:33"
+          },
+          {
+            "category": "景点",
+            "name": "圣心大教堂",
+            "location": "广州市越秀区",
+            "summary": "圣心大教堂是广州著名的天主教堂，建筑风格独特。",
+            "id": 66,
+            "created_at": "2026-06-06T20:21:33",
+            "updated_at": "2026-06-06T20:21:33"
+          },
+          {
+            "category": "景点",
+            "name": "北京路步行街",
+            "location": "广州市越秀区",
+            "summary": "北京路步行街是广州繁华的商业街，适合购物和美食。",
+            "id": 67,
+            "created_at": "2026-06-06T20:21:33",
+            "updated_at": "2026-06-06T20:21:33"
+          },
+          {
+            "category": "交通",
+            "name": "珠江夜游",
+            "location": "广州市",
+            "summary": "珠江夜游是广州特色游览项目，可欣赏两岸灯光夜景。",
+            "id": 68,
+            "created_at": "2026-06-06T20:21:33",
+            "updated_at": "2026-06-06T20:21:33"
+          }
+        ]
+      },
+      "detail": "",
+      "item_count": 8,
+      "extracted_text_length": 681,
+      "extracted_text_preview": "唐 州 可 分 为 四 人 板块 游玩 HAS A 8 ~ NAN? Beene 天 @ pe = o? ‘ a 省 博物 馆 A) 人 广东 本 和 丰 NV] nan? Seer: Orneewn DAY1 陈 家 福 EE if 月 "
+    },
+    {
+      "file_name": "微信图片_20260606194613_494_141.jpg",
+      "started_at": "2026-06-06T20:21:33",
+      "elapsed_seconds": 16.391,
+      "status_code": 200,
+      "response": {
+        "status": "success",
+        "file_name": "微信图片_20260606194613_494_141.jpg",
+        "file_type": "image",
+        "extracted_text": "党 ~\nPius)\ny | Phat: 2k\ny 产 示 疡 外 二 学 ‘ GE: SP LmMOee\nj Cn) a GREE Tiss\nGe aes\nwae Ora?\nae SAG » Gat\n开放 时 间 : 9:00—17:30 me ee 3 le\n特色 : 岭南 建筑 艺术 的 明珠 AN] Fe\n* | Ls\neo | TD 二 了 广州 市 妇 :\nrl Dein Se aise O MEN\nao cine —s\nit ‘ Be EGGS Bre\nw 广东 省 中 医 辽\n天 地 广场 ， 人 六 入 pao s\n全 8\n|\n| a ee\nWa | 加 3\n~ =e & &\nVERE] CS.\nfo 开放 时 间 : 6:00-2:00 二\n特色 : 奥 型 的 淮南 园林 / JS * — Be\nCREE Vv, = i fr wr i‘ uy J\noT Va) soy | Aili es\n国务 党 湖 公园 ans re\nAy 第 三 医院 OZ *\not) ee Gach Epuieesd\noe IK TELL\n— Ss i o/h Se\n— FETE: 全 天 aa Rt\n特色 : 在 百年 骑楼 的 基 ee 5 小 面议 aot\na mT pr 础 上 改造 的 文 创 街区 |\n高 低 塘 工 业 区 My cee mina\nDAY1: PRA QFE => BAIS AR > 沙 面 岛\nSybase span cs . “Bap _",
+        "item_count": 3,
+        "items": [
+          {
+            "category": "景点",
+            "name": "陈家祠",
+            "location": "广州市荔湾区中山七路",
+            "summary": "陈家祠是岭南建筑艺术的明珠，开放时间为9:00-17:30。",
+            "id": 69,
+            "created_at": "2026-06-06T20:21:49",
+            "updated_at": "2026-06-06T20:21:49"
+          },
+          {
+            "category": "景点",
+            "name": "沙面岛",
+            "location": "广州市荔湾区沙面南街",
+            "summary": "沙面岛是典型的岭南园林风格景点，全天开放。",
+            "id": 70,
+            "created_at": "2026-06-06T20:21:49",
+            "updated_at": "2026-06-06T20:21:49"
+          },
+          {
+            "category": "景点",
+            "name": "永庆坊",
+            "location": "广州市荔湾区恩宁路",
+            "summary": "永庆坊是在百年骑楼基础上改造的文创街区，全天开放。",
+            "id": 71,
+            "created_at": "2026-06-06T20:21:49",
+            "updated_at": "2026-06-06T20:21:49"
+          }
+        ]
+      },
+      "detail": "",
+      "item_count": 3,
+      "extracted_text_length": 644,
+      "extracted_text_preview": "党 ~ Pius) y | Phat: 2k y 产 示 疡 外 二 学 ‘ GE: SP LmMOee j Cn) a GREE Tiss Ge aes wae Ora? ae SAG » Gat 开放 时 间 : 9:00—17:30 "
+    },
+    {
+      "file_name": "微信图片_20260606194617_495_141.jpg",
+      "started_at": "2026-06-06T20:21:49",
+      "elapsed_seconds": 17.353,
+      "status_code": 200,
+      "response": {
+        "status": "success",
+        "file_name": "微信图片_20260606194617_495_141.jpg",
+        "file_type": "image",
+        "extracted_text": "广州 DAY2 路 线 中 国 天 酒店\n南越 王 博 物 院 @ Qreme\n流花 湖 二 YY\n5, TA: 9:00-17:30 小 北\nSte BRR: 中 式 建筑 非常 安\n二 人 伟 ， 是 广州 的 地 标 之 一 应 元 路\n第 一 人 民 医院 他 ”一 sy\nSica eos “oN\n光孝 寺 OQ\nFaas\n| a Neo a\nSa a a : Sa 门票 : 免 费 民 公 70 X cos ny bs\nL@ f= ==me® fai Ress r 员\nae: EE es Sy,\nOe? bombo) (82 ous\n了 OTe 2 bl\n地 各 a \\\nx ay oe i J\n) 开放 时 间 : 6:00—21:00 区\not Guo foam\nLO 特色 : 红 墙 黄 瓦 的 明 清 寻\n/ i, DASE wee FE\nSESE aie a\n7 Saunas ais nN\nof |. age Fiz\n| ts | f rT SEO TES —> §\nsie ee ET, /\nCREST s 开放 时 间 : 8:00-11:30, 14:30-17:30\npor nate: 特色 : 广场 和 圣 党 拍照 都 非常 出 片 !\nEEDAY2: 中 山 纪 念 岩 树 夫 高 路 -9 太公 者 9 孚 也 大 教堂 > 农 讲 所",
+        "item_count": 6,
+        "items": [
+          {
+            "category": "景点",
+            "name": "南越王博物院",
+            "location": "广州市越秀区解放北路867号",
+            "summary": "南越王博物院展示南越国历史文物，是了解广州古代文化的重要场所。",
+            "id": 72,
+            "created_at": "2026-06-06T20:22:06",
+            "updated_at": "2026-06-06T20:22:06"
+          },
+          {
+            "category": "景点",
+            "name": "流花湖公园",
+            "location": "广州市越秀区流花路100号",
+            "summary": "流花湖公园以湖光水色和园林景观为特色，适合休闲散步和拍照。",
+            "id": 73,
+            "created_at": "2026-06-06T20:22:06",
+            "updated_at": "2026-06-06T20:22:06"
+          },
+          {
+            "category": "景点",
+            "name": "光孝寺",
+            "location": "广州市越秀区光孝路109号",
+            "summary": "光孝寺是广州最古老的佛教寺庙之一，建筑古朴，环境清幽。",
+            "id": 74,
+            "created_at": "2026-06-06T20:22:06",
+            "updated_at": "2026-06-06T20:22:06"
+          },
+          {
+            "category": "景点",
+            "name": "中山纪念堂",
+            "location": "广州市越秀区东风中路259号",
+            "summary": "中山纪念堂是广州地标建筑，中式风格宏伟壮观，适合参观和拍照。",
+            "id": 75,
+            "created_at": "2026-06-06T20:22:06",
+            "updated_at": "2026-06-06T20:22:06"
+          },
+          {
+            "category": "景点",
+            "name": "石室圣心大教堂",
+            "location": "广州市越秀区一德路旧部前56号",
+            "summary": "石室圣心大教堂是广州著名天主教堂，双塔建筑和彩色玻璃窗极具特色。",
+            "id": 76,
+            "created_at": "2026-06-06T20:22:06",
+            "updated_at": "2026-06-06T20:22:06"
+          },
+          {
+            "category": "景点",
+            "name": "农讲所",
+            "location": "广州市越秀区中山四路42号",
+            "summary": "农讲所是毛泽东主办的农民运动讲习所旧址，红色旅游景点，免费开放。",
+            "id": 77,
+            "created_at": "2026-06-06T20:22:06",
+            "updated_at": "2026-06-06T20:22:06"
+          }
+        ]
+      },
+      "detail": "",
+      "item_count": 6,
+      "extracted_text_length": 593,
+      "extracted_text_preview": "广州 DAY2 路 线 中 国 天 酒店 南越 王 博 物 院 @ Qreme 流花 湖 二 YY 5, TA: 9:00-17:30 小 北 Ste BRR: 中 式 建筑 非常 安 二 人 伟 ， 是 广州 的 地 标 之 一 应 元 "
+    },
+    {
+      "file_name": "微信图片_20260606194622_496_141.jpg",
+      "started_at": "2026-06-06T20:22:06",
+      "elapsed_seconds": 15.721,
+      "status_code": 200,
+      "response": {
+        "status": "success",
+        "file_name": "微信图片_20260606194622_496_141.jpg",
+        "file_type": "image",
+        "extracted_text": "黄埔 大 道\n广州 DAY3 路 线 =\n=\n& (eee\ncen cE eR 7 Nee\nieee: 广州 的 “城市 客厅 ”， 可 oa ‘ea\nCae ape\n, 全 - a\nAE < of\nog 7S Ba BB\n“i = 2x 4a ;\n| 区 全 17-8) 1H\n开放 时 间 : 9:00—17:00\n(周二 闭 馆 )\n华 利 路 Ns: “AER” ae\nTe Les %,,\n广州 图 书馆 @@ 天 涝 厂 所\nae eae ae\n¢ oh Fi 天 德 广场 OC se fe\n开放 时 间 : 全 天 人 ie |\na oe\nripnkes ; AST YEN ,\n开 闭幕 式 的 举办 地 党 关公 园 邓\n» OFS RI\n) ee EY peer\nUL age 开放 时 间 : 9:00—23:00\n“sues REPEL 1.\nSRN, 特色 : Week ONE” Be\n<= 州 的 城市 地 标 |\nGE Si _~ |\n门票 : 60 元 起 1 J ar: . st] |\n开放 时 间 : 18:30-22:005 90% MO yak a e ..\nTeMSuLE cued ie <a” 5\n= Mal\nDAY3: RE PHESTea dA POSAD DIT NIE BSL Be",
+        "item_count": 6,
+        "items": [
+          {
+            "category": "景点",
+            "name": "花城广场",
+            "location": "广州市天河区",
+            "summary": "花城广场被誉为广州的城市客厅，适合漫步和欣赏城市景观。",
+            "id": 78,
+            "created_at": "2026-06-06T20:22:22",
+            "updated_at": "2026-06-06T20:22:22"
+          },
+          {
+            "category": "景点",
+            "name": "广州塔",
+            "location": "广州市海珠区阅江西路222号",
+            "summary": "广州塔是广州的城市地标，开放时间为18:30-22:00，门票60元起。",
+            "id": 79,
+            "created_at": "2026-06-06T20:22:22",
+            "updated_at": "2026-06-06T20:22:22"
+          },
+          {
+            "category": "景点",
+            "name": "海心沙",
+            "location": "广州市天河区珠江新城",
+            "summary": "海心沙是亚运会开闭幕式的举办地，全天开放。",
+            "id": 80,
+            "created_at": "2026-06-06T20:22:22",
+            "updated_at": "2026-06-06T20:22:22"
+          },
+          {
+            "category": "景点",
+            "name": "广州图书馆",
+            "location": "广州市天河区珠江东路4号",
+            "summary": "广州图书馆开放时间为9:00-17:00，周二闭馆。",
+            "id": 81,
+            "created_at": "2026-06-06T20:22:22",
+            "updated_at": "2026-06-06T20:22:22"
+          },
+          {
+            "category": "景点",
+            "name": "天德广场",
+            "location": "广州市天河区临江大道",
+            "summary": "天德广场全天开放，适合休闲游览。",
+            "id": 82,
+            "created_at": "2026-06-06T20:22:22",
+            "updated_at": "2026-06-06T20:22:22"
+          },
+          {
+            "category": "景点",
+            "name": "花城公园",
+            "location": "广州市天河区花城大道",
+            "summary": "花城公园开放时间为9:00-23:00，适合散步休闲。",
+            "id": 83,
+            "created_at": "2026-06-06T20:22:22",
+            "updated_at": "2026-06-06T20:22:22"
+          }
+        ]
+      },
+      "detail": "",
+      "item_count": 6,
+      "extracted_text_length": 571,
+      "extracted_text_preview": "黄埔 大 道 广州 DAY3 路 线 = = & (eee cen cE eR 7 Nee ieee: 广州 的 “城市 客厅 ”， 可 oa ‘ea Cae ape , 全 - a AE < of og 7S Ba BB “i = 2x "
+    },
+    {
+      "file_name": "微信图片_20260606194631_497_141.jpg",
+      "started_at": "2026-06-06T20:22:22",
+      "elapsed_seconds": 12.612,
+      "status_code": 200,
+      "response": {
+        "status": "success",
+        "file_name": "微信图片_20260606194631_497_141.jpg",
+        "file_type": "image",
+        "extracted_text": "© 240 » |\n广州 DAY4 路 线 lag\n[sai] Ga “全\n起\n马 务 牌坊 ae\n| how . 人 语 外 贸 大\nee\n| 门票 : 5 元 〈 山 南 门 岗 )\n齐 富 路 开放 时 间 : 6:00—21:00\n特色 : 广州 的 “市 肺 ”， 主\n@ /放下 云 国 际会 议 中 必 [ECE eS\n/,\n/ | =\niNT) LES BG “ one\n@ 云 溪 植物 园\neg ayrazu »\n3 “ 风 中 名 胜 区 s\né SEA 类\nky 372.6 ; 二\nOnxp\n| 信 达 金 茂 广场 O\nBih 六\n- 34\n“A Gp £O=sav\neo mee: 位 于 白云 山 山 县 Soe\nesas aw\nGea) Wee 只 发\n~~ ee\nyy, (Oe gee, \\\n7a 7 7p Name\n和 全 Rae a BAY 4 让 云 山 7>c 云 的 花 质\nAare\n, 二 > St as",
+        "item_count": 2,
+        "items": [
+          {
+            "category": "景点",
+            "name": "白云山",
+            "location": "广州市白云区",
+            "summary": "白云山是广州的“市肺”，适合登山和自然观光，南门门票5元。",
+            "id": 84,
+            "created_at": "2026-06-06T20:22:35",
+            "updated_at": "2026-06-06T20:22:35"
+          },
+          {
+            "category": "景点",
+            "name": "云溪植物园",
+            "location": "广州市白云区白云山山麓",
+            "summary": "云溪植物园位于白云山山麓，以植物景观和生态体验为特色。",
+            "id": 85,
+            "created_at": "2026-06-06T20:22:35",
+            "updated_at": "2026-06-06T20:22:35"
+          }
+        ]
+      },
+      "detail": "",
+      "item_count": 2,
+      "extracted_text_length": 428,
+      "extracted_text_preview": "© 240 » | 广州 DAY4 路 线 lag [sai] Ga “全 起 马 务 牌坊 ae | how . 人 语 外 贸 大 ee | 门票 : 5 元 〈 山 南 门 岗 ) 齐 富 路 开放 时 间 : 6:00—21:00 "
+    },
+    {
+      "file_name": "微信图片_20260606194637_498_141.jpg",
+      "started_at": "2026-06-06T20:22:35",
+      "elapsed_seconds": 13.792,
+      "status_code": 200,
+      "response": {
+        "status": "success",
+        "file_name": "微信图片_20260606194637_498_141.jpg",
+        "file_type": "image",
+        "extracted_text": "4\nJN hikihtE TS IRAE\n。 天 河 区 《珠江 新 城 /体育 西 ) : 靠近 花城 广场 、 广 州 塔 等 商业 地 标 ，\n逛街 购物 、 夜 景观 员 极 为 便利 ， 是 感受 都 市 活力 的 优选 区 域\n“越秀 区 (北京 路 /海珠 广场 ) : 拥有 北京 路 步行 街 、 大 佛寺 等 众多 历\n史 文 化 景点 ， 喜 欢 人 文 历史 的 游客 可 以 选择 ， 体 验 广 州 的 老 城 韵味\nmek (上 下 九 / 沙 面 ) : RAM, SEKI. WHS, bh\n道 美食 和 骑楼 建筑 云集 ， 适 合 训 欢 慢 节 奏 和 烟火 气 的 送 客\n。 厂 州 日 云 国际 机 场 附近 :; 适合 深 夜 抵达 或 清晨 出 发 的 游客 ， 交 通 中\n转 方便 ， 能 节省 路 途 时 间\n。 海珠 区 〈 亚 洲 /江南 西 ) : 靠近 广交会 展 馆 ， 江 南西 商 圈 生活 气息 浓\n厚 ， 地 铁 线路 密集 ， 前 往 各 大 景点 都 很 便捷 ， 住 簿 类 型 丰富 多 样\n1. 预订 前 仔细 阅读 酒店 或 民 笨 的 退 订 政策 ， 尤 其 是 旅游 旺季 ， 避 免 因\n行程 变动 造成 损失 。\n2. 右 选 择 民 重 ， 要 确认 其 是 否 具备 合法 经 营 资质 ， 碍 看 房屋 设施 、 卫\n生 情 况 的 真实 评价 ， 确 保 居 住 安 全 舒适 。\n3. 远离 车 站 、 景 总 门口 那些 无 牌 无 证 的 拉客 住 销 ， 此 类 住宿 往往 存在\n安全 隐患 且 服 务 无 保障 。",
+        "item_count": 5,
+        "items": [
+          {
+            "category": "住宿",
+            "name": "天河区珠江新城/体育西",
+            "location": "广州市天河区珠江新城/体育西",
+            "summary": "靠近花城广场、广州塔等商业地标，逛街购物和夜景观赏极为便利。",
+            "id": 86,
+            "created_at": "2026-06-06T20:22:49",
+            "updated_at": "2026-06-06T20:22:49"
+          },
+          {
+            "category": "住宿",
+            "name": "越秀区北京路/海珠广场",
+            "location": "广州市越秀区北京路/海珠广场",
+            "summary": "拥有北京路步行街、大佛寺等历史文化景点，适合体验老城韵味。",
+            "id": 87,
+            "created_at": "2026-06-06T20:22:49",
+            "updated_at": "2026-06-06T20:22:49"
+          },
+          {
+            "category": "住宿",
+            "name": "荔湾区上下九/沙面",
+            "location": "广州市荔湾区上下九/沙面",
+            "summary": "地道美食和骑楼建筑云集，适合喜欢慢节奏和烟火气的游客。",
+            "id": 88,
+            "created_at": "2026-06-06T20:22:49",
+            "updated_at": "2026-06-06T20:22:49"
+          },
+          {
+            "category": "住宿",
+            "name": "广州白云国际机场附近",
+            "location": "广州市花都区广州白云国际机场附近",
+            "summary": "适合深夜抵达或清晨出发的游客，交通中转方便，节省路途时间。",
+            "id": 89,
+            "created_at": "2026-06-06T20:22:49",
+            "updated_at": "2026-06-06T20:22:49"
+          },
+          {
+            "category": "住宿",
+            "name": "海珠区琶洲/江南西",
+            "location": "广州市海珠区琶洲/江南西",
+            "summary": "靠近广交会展馆，江南西商圈生活气息浓厚，地铁线路密集。",
+            "id": 90,
+            "created_at": "2026-06-06T20:22:49",
+            "updated_at": "2026-06-06T20:22:49"
+          }
+        ]
+      },
+      "detail": "",
+      "item_count": 5,
+      "extracted_text_length": 715,
+      "extracted_text_preview": "4 JN hikihtE TS IRAE 。 天 河 区 《珠江 新 城 /体育 西 ) : 靠近 花城 广场 、 广 州 塔 等 商业 地 标 ， 逛街 购物 、 夜 景观 员 极 为 便利 ， 是 感受 都 市 活力 的 优选 区 域 "
+    },
+    {
+      "file_name": "微信图片_20260606194639_499_141.jpg",
+      "started_at": "2026-06-06T20:22:49",
+      "elapsed_seconds": 14.827,
+      "status_code": 200,
+      "response": {
+        "status": "success",
+        "file_name": "微信图片_20260606194639_499_141.jpg",
+        "file_type": "image",
+        "extracted_text": "4\nJ Wilk ihe SZ EX BS\nwl: 广州 白云 国际 机 场 一 市 中 心 约 30 公 里\n机 场 大 巴 :\n空港 快 线 1 号 线 : 直达 广州 火车 站 ， 车 程 约 45 分 钟 ， 票 价 22r\n海珠 广场 线 : 直达 北京 路 商 轿 ， 车 程 约 50 分 钟 ， 票 价 25r\nNAM: 3 号 绪 北 延 段 直达 体育 西 路 、 珠 江 新 城 ， 车 程 约 45 分 钟 ，\n票 价 7-10r\n高 铁 /火车 :\n广州 南 站 : 地 铁 2/7/22 号 线 直 达 市 区 ， 车 程 约 30 分 钟\n广州 站 : 地 铁 2/5 号 线 直 达 ， 步 行 10 分 钟 到 越秀 公园\n广州 东 站 : 地 铁 1/3/18 号 线 直 达 ，15 分 钟 到 珠江 新 城\n住宿 注意 事项\n地 铁 : 已 开通 1-22 号 线 及 多 条 广 佛 线 ， 履 盖 所 有 核心 景 吕 ， 支 持 zfb\n乘 车 办， 出 行 优选\n公交 : 线路 密集 ， 履 盖 偏 远景 点 和 老 城区 小 巷 ， 票 价 2r 起\n出 租车 /网 约 车 : 起 步 价 12r BAH) ， 老 城区 罕 巷 多 ， 高 峰 期 建议\n优先 选 地 铁\n水 上 巴士 : 珠江 沿线 特色 交通 ， 西 堤 -天 子 -中 大 等 码头 ， 票 价 2-3m，\n可 顺路 看 江 景",
+        "item_count": 11,
+        "items": [
+          {
+            "category": "交通",
+            "name": "广州白云国际机场",
+            "location": "广州市白云区",
+            "summary": "广州白云国际机场距市中心约30公里，有机场大巴和地铁直达市区。",
+            "id": 91,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "空港快线1号线",
+            "location": "广州市-白云区-广州火车站",
+            "summary": "空港快线1号线从机场直达广州火车站，车程约45分钟，票价22元。",
+            "id": 92,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "海珠广场线",
+            "location": "广州市-越秀区-北京路",
+            "summary": "海珠广场线从机场直达北京路商圈，车程约50分钟，票价25元。",
+            "id": 93,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "地铁3号线北延段",
+            "location": "广州市-天河区-体育西路/珠江新城",
+            "summary": "地铁3号线北延段直达体育西路和珠江新城，车程约45分钟，票价7-10元。",
+            "id": 94,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "广州南站",
+            "location": "广州市-番禺区-广州南站",
+            "summary": "广州南站可乘地铁2/7/22号线直达市区，车程约30分钟。",
+            "id": 95,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "广州站",
+            "location": "广州市-越秀区-广州站",
+            "summary": "广州站可乘地铁2/5号线直达，步行10分钟到越秀公园。",
+            "id": 96,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "广州东站",
+            "location": "广州市-天河区-广州东站",
+            "summary": "广州东站可乘地铁1/3/18号线直达，15分钟到珠江新城。",
+            "id": 97,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "广州地铁",
+            "location": "广州市",
+            "summary": "广州地铁已开通1-22号线及广佛线，覆盖所有核心景点，支持支付宝乘车码。",
+            "id": 98,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "广州公交",
+            "location": "广州市",
+            "summary": "广州公交线路密集，覆盖偏远景点和老城区小巷，票价2元起。",
+            "id": 99,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "出租车/网约车",
+            "location": "广州市",
+            "summary": "广州出租车起步价12元，老城区窄巷多，高峰期建议优先选地铁。",
+            "id": 100,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          },
+          {
+            "category": "交通",
+            "name": "水上巴士",
+            "location": "广州市-珠江沿线",
+            "summary": "广州水上巴士是珠江沿线特色交通，票价2-3元，可顺路看江景。",
+            "id": 101,
+            "created_at": "2026-06-06T20:23:03",
+            "updated_at": "2026-06-06T20:23:03"
+          }
+        ]
+      },
+      "detail": "",
+      "item_count": 11,
+      "extracted_text_length": 628,
+      "extracted_text_preview": "4 J Wilk ihe SZ EX BS wl: 广州 白云 国际 机 场 一 市 中 心 约 30 公 里 机 场 大 巴 : 空港 快 线 1 号 线 : 直达 广州 火车 站 ， 车 程 约 45 分 钟 ， 票 价 22r 海珠 "
+    },
+    {
+      "file_name": "微信图片_20260606194641_500_141.jpg",
+      "started_at": "2026-06-06T20:23:03",
+      "elapsed_seconds": 15.776,
+      "status_code": 200,
+      "response": {
+        "status": "success",
+        "file_name": "微信图片_20260606194641_500_141.jpg",
+        "file_type": "image",
+        "extracted_text": "= SS\nJP BaLA AR AT FB\n-AL\nZR 2 BEN 5 —_—\nty™ ers\nhas\nJ Hi) Wis BES BS tie) Hey\n@ iw AB RS TP OAR (Ab RBBB) :\nNes @ OOF RE, ROCA AMARS, eA RIE\nSBPMRBRACMNHE, Rese, HE AF\n* Flim E KAVA A, 2EMRARR, 里面 满 满 的\n牛 杂 FRB, OCHCRERIE AOR, 92 RFR iE LA HS\n种 新 鲜 的 牛肉 进去 ， 不 要 太 耕 了\n> th B 12 RMB ok $B:\n1K RHE 7K HF FEAR BH!!! BEET 1 th Bir bd! Bk AP\n类 很 多 ， 人 均 才 十 几 块 ， 招 牌 杨 枝 甘露 料 很 足 很 足\nS xk WW 2 3;\nPBee wR, FER) OY 1K 28 REBAR.\n3H aH OD 1R KOK~ 1H BS FP OK 1G BY 2 3k\nOR FHKE:\n广州 可 以 听 轩 曲 喝 早 茶 的 百年 老字号 茶楼 ! 来 吃 的 都 是 本\n地 人 ， 可 以 点 一 便 茶 ， 点 几 件 点 心 ， 来 这 里 听 曲 MA\n) 英 姐 鲜 奶 :\n都 是 新 鲜 现 做 的 ， 招 牌 双 育 奶 和 和 牛奶 真 的 好 好 喝 ， 奶 味\n‘RiK GB, MARIA. MBAR",
+        "item_count": 4,
+        "items": [
+          {
+            "category": "饮食",
+            "name": "牛杂店",
+            "location": "广州市-未明确区域",
+            "summary": "这家牛杂店料足味美，里面满满牛杂，还加新鲜牛肉，非常好吃。",
+            "id": 102,
+            "created_at": "2026-06-06T20:23:19",
+            "updated_at": "2026-06-06T20:23:19"
+          },
+          {
+            "category": "饮食",
+            "name": "糖水店",
+            "location": "广州市-未明确区域",
+            "summary": "这家糖水店种类多，人均十几块，招牌杨枝甘露料很足。",
+            "id": 103,
+            "created_at": "2026-06-06T20:23:19",
+            "updated_at": "2026-06-06T20:23:19"
+          },
+          {
+            "category": "饮食",
+            "name": "百年老字号茶楼",
+            "location": "广州市-未明确区域",
+            "summary": "广州百年老字号茶楼，可听粤曲喝早茶，本地人常来，点心丰富。",
+            "id": 104,
+            "created_at": "2026-06-06T20:23:19",
+            "updated_at": "2026-06-06T20:23:19"
+          },
+          {
+            "category": "饮食",
+            "name": "英姐鲜奶",
+            "location": "广州市-未明确区域",
+            "summary": "英姐鲜奶新鲜现做，招牌双皮奶和牛奶奶味浓郁，口感顺滑。",
+            "id": 105,
+            "created_at": "2026-06-06T20:23:19",
+            "updated_at": "2026-06-06T20:23:19"
+          }
+        ]
+      },
+      "detail": "",
+      "item_count": 4,
+      "extracted_text_length": 645,
+      "extracted_text_preview": "= SS JP BaLA AR AT FB -AL ZR 2 BEN 5 —_— ty™ ers has J Hi) Wis BES BS tie) Hey @ iw AB RS TP OAR (Ab RBBB) : Nes @ OOF R"
+    },
+    {
+      "file_name": "微信图片_20260606194643_501_141.jpg",
+      "started_at": "2026-06-06T20:23:19",
+      "elapsed_seconds": 15.498,
+      "status_code": 200,
+      "response": {
+        "status": "success",
+        "file_name": "微信图片_20260606194643_501_141.jpg",
+        "file_type": "image",
+        "extracted_text": "= SS\nJP BaLA AR AT FB\n-AL\nZR 2 BEN 5 —_—\nty™ ers\nhas\nJ Hi) Wis BES BS tie) Hey\n@ iw AB RS TP OAR (Ab RBBB) :\nNes @ OOF RE, ROCA AMARS, eA RIE\nSBPMRBRACMNHE, Rese, HE AF\n* Flim E KAVA A, 2EMRARR, 里面 满 满 的\n牛 杂 FRB, OCHCRERIE AOR, 92 RFR iE LA HS\n种 新 鲜 的 牛肉 进去 ， 不 要 太 耕 了\n> th B 12 RMB ok $B:\n1K RHE 7K HF FEAR BH!!! BEET 1 th Bir bd! Bk AP\n类 很 多 ， 人 均 才 十 几 块 ， 招 牌 杨 枝 甘露 料 很 足 很 足\nS xk WW 2 3;\nPBee wR, FER) OY 1K 28 REBAR.\n3H aH OD 1R KOK~ 1H BS FP OK 1G BY 2 3k\nOR FHKE:\n广州 可 以 听 轩 曲 喝 早 茶 的 百年 老字号 茶楼 ! 来 吃 的 都 是 本\n地 人 ， 可 以 点 一 便 茶 ， 点 几 件 点 心 ， 来 这 里 听 曲 MA\n) 英 姐 鲜 奶 :\n都 是 新 鲜 现 做 的 ， 招 牌 双 育 奶 和 和 牛奶 真 的 好 好 喝 ， 奶 味\n‘RiK GB, MARIA. MBAR",
+        "item_count": 4,
+        "items": [
+          {
+            "category": "饮食",
+            "name": "牛杂店",
+            "location": "广州市-未明确区域",
+            "summary": "牛杂店用料丰富，有牛杂和新鲜牛肉，味道鲜美，价格实惠。",
+            "id": 106,
+            "created_at": "2026-06-06T20:23:35",
+            "updated_at": "2026-06-06T20:23:35"
+          },
+          {
+            "category": "饮食",
+            "name": "糖水店",
+            "location": "广州市-未明确区域",
+            "summary": "糖水店种类多，人均十几块，招牌杨枝甘露料很足。",
+            "id": 107,
+            "created_at": "2026-06-06T20:23:35",
+            "updated_at": "2026-06-06T20:23:35"
+          },
+          {
+            "category": "饮食",
+            "name": "百年老字号茶楼",
+            "location": "广州市-未明确区域",
+            "summary": "百年老字号茶楼可听粤曲喝早茶，本地人多，点心精致。",
+            "id": 108,
+            "created_at": "2026-06-06T20:23:35",
+            "updated_at": "2026-06-06T20:23:35"
+          },
+          {
+            "category": "饮食",
+            "name": "英姐鲜奶",
+            "location": "广州市-未明确区域",
+            "summary": "英姐鲜奶新鲜现做，招牌双皮奶和牛奶奶味浓郁，口感顺滑。",
+            "id": 109,
+            "created_at": "2026-06-06T20:23:35",
+            "updated_at": "2026-06-06T20:23:35"
+          }
+        ]
+      },
+      "detail": "",
+      "item_count": 4,
+      "extracted_text_length": 645,
+      "extracted_text_preview": "= SS JP BaLA AR AT FB -AL ZR 2 BEN 5 —_— ty™ ers has J Hi) Wis BES BS tie) Hey @ iw AB RS TP OAR (Ab RBBB) : Nes @ OOF R"
+    }
+  ]
+}
