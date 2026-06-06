@@ -1,30 +1,65 @@
 import { useEffect, useMemo, useState } from "react";
 import { buildExportUrl, CATEGORY_OPTIONS, fetchHealth, fetchItems, fetchWarnings, uploadFile } from "./api";
-import RecordList from "./components/RecordList";
-import SectionHeader from "./components/SectionHeader";
-import StatCard from "./components/StatCard";
 import { formatTime, getErrorMessage, INITIAL_FILTERS } from "./utils";
 
-const VIEW_OPTIONS = [
-  {
-    id: "home",
-    label: "首页工作台",
-    description: "查看服务状态并上传新的攻略文件。",
-  },
-  {
-    id: "detail",
-    label: "项目详情",
-    description: "查看本次上传结果和结构化条目。",
-  },
-  {
-    id: "risk",
-    label: "避雷详情",
-    description: "查看 warning 命中历史与避雷说明。",
-  },
-];
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
+
+const SCREENS = {
+  home: { src: "/ui/home.png", alt: "旅程积木首页" },
+  create: { src: "/ui/create.png", alt: "新建旅行项目" },
+  detail: { src: "/ui/detail.png", alt: "项目详情" },
+  risk: { src: "/ui/risk.png", alt: "避雷详情" },
+  explore: { src: "/ui/explore.png", alt: "探索页" },
+  mine: { src: "/ui/mine.png", alt: "我的页" },
+};
+
+const HOTSPOTS = {
+  home: [
+    { label: "打开项目", rect: [5, 21, 90, 41], action: { type: "screen", target: "detail" } },
+    { label: "创建项目", rect: [83, 81, 13, 9], action: { type: "screen", target: "create" } },
+    { label: "首页", rect: [8, 92, 26, 7], action: { type: "screen", target: "home" } },
+    { label: "探索", rect: [37, 92, 26, 7], action: { type: "screen", target: "explore" } },
+    { label: "我的", rect: [66, 92, 26, 7], action: { type: "screen", target: "mine" } },
+  ],
+  create: [
+    { label: "关闭创建页", rect: [87, 37, 8, 6], action: { type: "screen", target: "home" } },
+    { label: "取消", rect: [7, 86, 31, 7], action: { type: "screen", target: "home" } },
+    { label: "创建并解析", rect: [42, 86, 52, 7], action: { type: "upload" } },
+  ],
+  detail: [
+    { label: "返回首页", rect: [4, 6, 8, 6], action: { type: "screen", target: "home" } },
+    { label: "打开避雷详情", rect: [48, 43, 30, 7], action: { type: "screen", target: "risk" } },
+    { label: "模块避雷详情", rect: [48, 69, 31, 7], action: { type: "screen", target: "risk" } },
+    { label: "预览路线", rect: [4, 91, 23, 8], action: { type: "toast", message: "当前仅保留静态预览提示" } },
+    { label: "智能优化", rect: [28, 91, 23, 8], action: { type: "toast", message: "智能优化待后端能力接入" } },
+    { label: "导出攻略", rect: [52, 91, 23, 8], action: { type: "toast", message: "请使用上方 JSON / CSV 导出" } },
+    { label: "更多设置", rect: [76, 91, 20, 8], action: { type: "toast", message: "更多设置暂未接入" } },
+  ],
+  risk: [
+    { label: "关闭避雷详情", rect: [84, 36, 8, 6], action: { type: "screen", target: "detail" } },
+    { label: "知道了", rect: [10, 85, 80, 6], action: { type: "screen", target: "detail" } },
+    { label: "查看同类避雷", rect: [27, 92, 46, 5], action: { type: "toast", message: "已按当前分类筛选 warning" } },
+  ],
+  explore: [
+    { label: "复制上海模板", rect: [32, 35, 18, 5], action: { type: "toast", message: "模板复制功能暂未接入" } },
+    { label: "复制底部模板", rect: [25, 87, 12, 5], action: { type: "toast", message: "模板复制功能暂未接入" } },
+    { label: "首页", rect: [8, 94, 26, 6], action: { type: "screen", target: "home" } },
+    { label: "探索", rect: [37, 94, 26, 6], action: { type: "screen", target: "explore" } },
+    { label: "我的", rect: [66, 94, 26, 6], action: { type: "screen", target: "mine" } },
+  ],
+  mine: [
+    { label: "打开我的项目", rect: [6, 31, 45, 14], action: { type: "screen", target: "detail" } },
+    { label: "继续拼路线", rect: [72, 54, 20, 6], action: { type: "screen", target: "detail" } },
+    { label: "首页", rect: [8, 94, 26, 6], action: { type: "screen", target: "home" } },
+    { label: "探索", rect: [37, 94, 26, 6], action: { type: "screen", target: "explore" } },
+    { label: "我的", rect: [66, 94, 26, 6], action: { type: "screen", target: "mine" } },
+  ],
+};
 
 export default function App() {
-  const [activeView, setActiveView] = useState("home");
+  const [activeScreen, setActiveScreen] = useState("home");
+  const [toast, setToast] = useState("");
+
   const [health, setHealth] = useState(null);
   const [healthError, setHealthError] = useState("");
   const [loadingHealth, setLoadingHealth] = useState(true);
@@ -37,13 +72,18 @@ export default function App() {
 
   const [itemFilters, setItemFilters] = useState(INITIAL_FILTERS);
   const [warningFilters, setWarningFilters] = useState(INITIAL_FILTERS);
-
   const [itemsData, setItemsData] = useState({ total: 0, items: [] });
   const [warningsData, setWarningsData] = useState({ total: 0, items: [] });
   const [itemsError, setItemsError] = useState("");
   const [warningsError, setWarningsError] = useState("");
   const [loadingItems, setLoadingItems] = useState(true);
   const [loadingWarnings, setLoadingWarnings] = useState(true);
+
+  function flash(message) {
+    setToast(message);
+    window.clearTimeout(window.__journeyToast);
+    window.__journeyToast = window.setTimeout(() => setToast(""), 1500);
+  }
 
   async function loadHealth() {
     setLoadingHealth(true);
@@ -96,10 +136,30 @@ export default function App() {
     loadWarnings(warningFilters);
   }, [warningFilters]);
 
-  async function handleUpload(event) {
-    event.preventDefault();
+  async function submitUpload() {
+    if (uploading) {
+      return;
+    }
+
     if (!selectedFile) {
       setUploadError("请先选择图片或 PDF 文件。");
+      setActiveScreen("create");
+      return;
+    }
+
+    if (!selectedFile.type.includes("image") && selectedFile.type !== "application/pdf") {
+      setUploadError("仅支持 png、jpg、jpeg、webp 或 pdf。");
+      return;
+    }
+
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      setUploadError("文件不能超过 20MB。");
+      return;
+    }
+
+    if (!health?.database_configured) {
+      setUploadError("后端服务或数据库未就绪，暂时无法上传。");
+      flash("请先确认服务状态正常");
       return;
     }
 
@@ -107,19 +167,46 @@ export default function App() {
     setUploadError("");
 
     try {
-      const result = await uploadFile({
-        file: selectedFile,
-        contextText,
-      });
+      const result = await uploadFile({ file: selectedFile, contextText });
       setUploadResult(result);
-      await Promise.all([loadItems(), loadWarnings()]);
-      setActiveView("detail");
+      await Promise.all([loadItems(itemFilters), loadWarnings(warningFilters)]);
+      flash(`已处理 ${result.item_count} 条内容`);
+      setActiveScreen("detail");
     } catch (error) {
       setUploadError(getErrorMessage(error, "上传失败"));
+      flash("上传失败");
     } finally {
       setUploading(false);
     }
   }
+
+  function handleUploadSubmit(event) {
+    event.preventDefault();
+    void submitUpload();
+  }
+
+  function handleHotspot(action) {
+    if (!action) {
+      return;
+    }
+
+    if (action.type === "screen") {
+      setActiveScreen(action.target);
+      return;
+    }
+
+    if (action.type === "toast") {
+      flash(action.message);
+      return;
+    }
+
+    if (action.type === "upload") {
+      void submitUpload();
+    }
+  }
+
+  const latestItems = uploadResult?.items?.length ? uploadResult.items : itemsData.items.slice(0, 4);
+  const latestWarnings = uploadResult?.warnings?.length ? uploadResult.warnings : warningsData.items.slice(0, 4);
 
   const itemExportJsonUrl = useMemo(
     () => buildExportUrl("items", { ...itemFilters, format: "json" }),
@@ -138,267 +225,404 @@ export default function App() {
     [warningFilters],
   );
 
-  const uploadDisabled = uploading || loadingHealth || !health?.database_configured;
-  const activeViewMeta = VIEW_OPTIONS.find((view) => view.id === activeView) || VIEW_OPTIONS[0];
+  return (
+    <main className="demo-stage">
+      <div className="demo-meta">
+        <p className="meta-tag">旅程积木 / 复刻开发版</p>
+        <h1>保留原型页面结构，接入真实上传与卡片数据</h1>
+        <p className="meta-copy">
+          当前版本只开发核心能力：文件上传、结构化卡片、warning 卡片。探索和我的保持静态展示。
+        </p>
+      </div>
+
+      <ReferenceScreen screen={activeScreen}>
+        {activeScreen === "home" ? (
+          <HomeOverlay
+            health={health}
+            healthError={healthError}
+            loadingHealth={loadingHealth}
+            itemsTotal={itemsData.total}
+            warningsTotal={warningsData.total}
+            onRefresh={loadHealth}
+            onCreate={() => setActiveScreen("create")}
+          />
+        ) : null}
+
+        {activeScreen === "create" ? (
+          <CreateOverlay
+            selectedFile={selectedFile}
+            contextText={contextText}
+            uploadError={uploadError}
+            uploading={uploading}
+            onFileChange={setSelectedFile}
+            onContextChange={setContextText}
+            onCancel={() => setActiveScreen("home")}
+            onSubmit={handleUploadSubmit}
+          />
+        ) : null}
+
+        {activeScreen === "detail" ? (
+          <DetailOverlay
+            uploadResult={uploadResult}
+            items={latestItems}
+            warnings={latestWarnings}
+            itemFilters={itemFilters}
+            itemExportJsonUrl={itemExportJsonUrl}
+            itemExportCsvUrl={itemExportCsvUrl}
+            itemsError={itemsError}
+            onItemFilterChange={setItemFilters}
+            onOpenRisk={() => setActiveScreen("risk")}
+          />
+        ) : null}
+
+        {activeScreen === "risk" ? (
+          <RiskOverlay
+            warnings={warningsData.items}
+            warningsTotal={warningsData.total}
+            warningFilters={warningFilters}
+            warningExportJsonUrl={warningExportJsonUrl}
+            warningExportCsvUrl={warningExportCsvUrl}
+            warningsError={warningsError}
+            loadingWarnings={loadingWarnings}
+            onFilterChange={setWarningFilters}
+          />
+        ) : null}
+
+        {activeScreen === "explore" ? <StaticOverlay title="探索页静态保留" message="当前仅保留设计展示，不接真实业务接口。" /> : null}
+        {activeScreen === "mine" ? <StaticOverlay title="我的页静态保留" message="当前仅保留项目入口展示，后续如需接登录与资产体系再扩展。" /> : null}
+
+        {HOTSPOTS[activeScreen].map((hotspot) => (
+          <Hotspot
+            key={`${activeScreen}-${hotspot.label}`}
+            label={hotspot.label}
+            rect={hotspot.rect}
+            onClick={() => handleHotspot(hotspot.action)}
+          />
+        ))}
+      </ReferenceScreen>
+
+      {toast ? <div className="toast">{toast}</div> : null}
+    </main>
+  );
+}
+
+function ReferenceScreen({ screen, children }) {
+  const item = SCREENS[screen];
 
   return (
-    <main className="page-shell">
-      <section className="hero-panel">
+    <section className="reference-screen" aria-label={item.alt}>
+      <img src={item.src} alt={item.alt} draggable="false" />
+      <div className="screen-overlay">{children}</div>
+    </section>
+  );
+}
+
+function HomeOverlay({ health, healthError, loadingHealth, itemsTotal, warningsTotal, onRefresh, onCreate }) {
+  return (
+    <div className="overlay-card overlay-home">
+      <div className="overlay-header">
         <div>
-          <p className="eyebrow">旅程积木 / 前后端整合骨架</p>
-          <h1>上传攻略文件，查看结构化结果与避雷提醒</h1>
-          <p className="hero-copy">
-            当前骨架已经接通健康检查、单文件上传、结构化结果查询、warning 查询和导出入口，
-            后续可继续演进为首页、创建项目、项目详情、避雷详情等真实业务页面。
-          </p>
+          <span className="overlay-kicker">服务状态</span>
+          <h2>{loadingHealth ? "正在检查服务..." : "当前可以直接联调"}</h2>
         </div>
-        <div className="hero-actions">
-          {VIEW_OPTIONS.map((view) => (
-            <button
-              key={view.id}
-              type="button"
-              className={view.id === activeView ? "nav-chip active" : "nav-chip"}
-              onClick={() => setActiveView(view.id)}
-            >
-              {view.label}
-            </button>
+        <button type="button" className="ghost-button" onClick={onRefresh}>
+          刷新
+        </button>
+      </div>
+      <div className="mini-stats">
+        <Metric label="接口" value={health?.status || "-"} />
+        <Metric label="OCR" value={health?.extraction_backend || "-"} />
+        <Metric label="数据库" value={health?.database_configured ? "已连通" : "未就绪"} />
+      </div>
+      {healthError ? <p className="inline-error">{healthError}</p> : null}
+      <p className="overlay-copy">当前结构化记录 {itemsTotal} 条，warning 记录 {warningsTotal} 条。</p>
+      <div className="overlay-actions">
+        <button type="button" className="primary-button" onClick={onCreate}>
+          创建并解析
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CreateOverlay({
+  selectedFile,
+  contextText,
+  uploadError,
+  uploading,
+  onFileChange,
+  onContextChange,
+  onCancel,
+  onSubmit,
+}) {
+  return (
+    <form className="overlay-card overlay-create" onSubmit={onSubmit}>
+      <div className="overlay-header compact">
+        <div>
+          <span className="overlay-kicker">上传文件</span>
+          <h2>创建项目并解析</h2>
+        </div>
+      </div>
+      <label className="overlay-field">
+        <span>攻略文件</span>
+        <input
+          type="file"
+          accept=".png,.jpg,.jpeg,.webp,.pdf"
+          onChange={(event) => onFileChange(event.target.files?.[0] || null)}
+        />
+      </label>
+      <label className="overlay-field">
+        <span>补充上下文</span>
+        <textarea
+          rows="5"
+          placeholder="可选：补充城市、路线背景、截图来源等信息"
+          value={contextText}
+          onChange={(event) => onContextChange(event.target.value)}
+        />
+      </label>
+      <div className="file-chip">{selectedFile ? selectedFile.name : "未选择文件"}</div>
+      {uploadError ? <p className="inline-error">{uploadError}</p> : null}
+      <div className="overlay-actions dual">
+        <button type="button" className="ghost-button" onClick={onCancel}>
+          取消
+        </button>
+        <button type="submit" className="primary-button" disabled={uploading}>
+          {uploading ? "处理中..." : "创建并解析"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function DetailOverlay({
+  uploadResult,
+  items,
+  warnings,
+  itemFilters,
+  itemExportJsonUrl,
+  itemExportCsvUrl,
+  itemsError,
+  onItemFilterChange,
+  onOpenRisk,
+}) {
+  return (
+    <div className="overlay-card overlay-detail">
+      <div className="overlay-header">
+        <div>
+          <span className="overlay-kicker">项目详情</span>
+          <h2>{uploadResult ? uploadResult.file_name : "历史结构化结果"}</h2>
+        </div>
+        <div className="link-actions">
+          <a href={itemExportJsonUrl} target="_blank" rel="noreferrer">
+            JSON
+          </a>
+          <a href={itemExportCsvUrl} target="_blank" rel="noreferrer">
+            CSV
+          </a>
+        </div>
+      </div>
+
+      {uploadResult ? (
+        <div className="mini-stats">
+          <Metric label="识别" value={uploadResult.item_count} />
+          <Metric label="入库" value={uploadResult.saved_count} />
+          <Metric label="去重" value={uploadResult.deduplicated_count} />
+          <Metric label="warning" value={uploadResult.warning_count} />
+        </div>
+      ) : (
+        <p className="overlay-copy">尚未上传文件，当前展示的是历史记录预览。</p>
+      )}
+
+      <div className="filter-strip">
+        <select
+          value={itemFilters.category}
+          onChange={(event) =>
+            onItemFilterChange((current) => ({
+              ...current,
+              category: event.target.value,
+            }))
+          }
+        >
+          {CATEGORY_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
           ))}
-          <button type="button" className="secondary-button" onClick={loadHealth} disabled={loadingHealth}>
-            {loadingHealth ? "检查中..." : "刷新服务状态"}
-          </button>
-        </div>
-      </section>
+        </select>
+        <input
+          value={itemFilters.keyword}
+          placeholder="搜索名称或地点"
+          onChange={(event) =>
+            onItemFilterChange((current) => ({
+              ...current,
+              keyword: event.target.value,
+            }))
+          }
+        />
+      </div>
 
-      <section className="panel current-view-panel">
-        <SectionHeader title={activeViewMeta.label} description={activeViewMeta.description} />
-      </section>
+      {itemsError ? <p className="inline-error">{itemsError}</p> : null}
 
-      {activeView === "home" && (
-        <>
-          <section className="panel">
-            <SectionHeader
-              title="服务状态"
-              description="必须先确认 FastAPI、MySQL 和 warning 种子同步状态正常，才能进入上传主流程。"
-            />
-            {healthError ? <div className="error-banner">{healthError}</div> : null}
-            <div className="stats-grid">
-              <StatCard label="服务状态" value={health?.status || (loadingHealth ? "加载中" : "-")} />
-              <StatCard label="服务名称" value={health?.service || "-"} />
-              <StatCard label="OCR 后端" value={health?.extraction_backend || "-"} />
-              <StatCard label="结构化模型" value={health?.structuring_model || "-"} />
-              <StatCard
-                label="数据库已配置"
-                value={health?.database_configured ? "是" : "否"}
-                hint={health?.warning_seed_file || ""}
-              />
-            </div>
-          </section>
+      <div className="scroll-region">
+        <section className="stack-section">
+          <div className="stack-header">
+            <h3>结构化卡片</h3>
+            <span>{items.length} 条预览</span>
+          </div>
+          {items.length ? items.map((item) => <StructuredCard key={item.id} item={item} />) : <EmptyCard text="暂无结构化结果" />}
+        </section>
 
-          <section className="panel">
-            <SectionHeader
-              title="创建并解析"
-              description="支持单张图片或 PDF 上传，处理耗时可能在 10 至 20 秒之间。"
-            />
-            <form className="upload-form" onSubmit={handleUpload}>
-              <label className="field">
-                <span>攻略文件</span>
-                <input
-                  type="file"
-                  accept=".png,.jpg,.jpeg,.webp,.pdf"
-                  onChange={(event) => setSelectedFile(event.target.files?.[0] || null)}
-                />
-              </label>
-
-              <label className="field">
-                <span>补充上下文</span>
-                <textarea
-                  rows="4"
-                  placeholder="可选：补充城市、路线背景、截图来源等信息"
-                  value={contextText}
-                  onChange={(event) => setContextText(event.target.value)}
-                />
-              </label>
-
-              <div className="form-footer">
-                <div className="file-summary">
-                  <span>{selectedFile ? selectedFile.name : "未选择文件"}</span>
-                </div>
-                <button type="submit" className="primary-button" disabled={uploadDisabled}>
-                  {uploading ? "处理中..." : "创建并解析"}
-                </button>
-              </div>
-            </form>
-            {uploadError ? <div className="error-banner">{uploadError}</div> : null}
-          </section>
-        </>
-      )}
-
-      {activeView === "detail" && (
-        <>
-          <section className="panel">
-            <SectionHeader
-              title="本次上传结果"
-              description="展示本次调用返回的结构化数量、去重数量与 warning 命中情况。"
-            />
-            {!uploadResult ? (
-              <div className="empty-state">完成一次上传后，将在这里显示最新结果。</div>
-            ) : (
-              <>
-                <div className="stats-grid">
-                  <StatCard label="识别条目数" value={uploadResult.item_count} />
-                  <StatCard label="新增入库数" value={uploadResult.saved_count} />
-                  <StatCard label="去重数量" value={uploadResult.deduplicated_count} />
-                  <StatCard label="warning 命中数" value={uploadResult.warning_count} />
-                  <StatCard label="warning 新增数" value={uploadResult.warning_saved_count} />
-                </div>
-                <div className="result-columns">
-                  <div className="result-box">
-                    <h3>OCR 原文</h3>
-                    <pre>{uploadResult.extracted_text || "无文本内容"}</pre>
-                  </div>
-                  <div className="result-box">
-                    <h3>本次命中 warning</h3>
-                    <RecordList
-                      items={uploadResult.warnings || []}
-                      emptyText="本次上传未命中避雷库。"
-                      renderMeta={(item) => <span>匹配方式：{item.matched_by}</span>}
-                      renderExtra={(item) => (
-                        <ul className="pill-list">
-                          {(item.avoid_reasons || []).map((reason) => (
-                            <li key={reason}>{reason}</li>
-                          ))}
-                        </ul>
-                      )}
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-          </section>
-
-          <section className="panel">
-            <SectionHeader
-              title="结构化结果"
-              description="可按分类和关键词筛选历史识别结果，并沿用筛选条件导出 JSON 或 CSV。"
-              actions={
-                <>
-                  <a className="ghost-link" href={itemExportJsonUrl} target="_blank" rel="noreferrer">
-                    导出 JSON
-                  </a>
-                  <a className="ghost-link" href={itemExportCsvUrl} target="_blank" rel="noreferrer">
-                    导出 CSV
-                  </a>
-                </>
-              }
-            />
-            <div className="filter-row">
-              <select
-                value={itemFilters.category}
-                onChange={(event) => setItemFilters((current) => ({ ...current, category: event.target.value }))}
-              >
-                {CATEGORY_OPTIONS.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <input
-                value={itemFilters.keyword}
-                placeholder="搜索名称、地点、摘要"
-                onChange={(event) => setItemFilters((current) => ({ ...current, keyword: event.target.value }))}
-              />
-              <button type="button" className="secondary-button" onClick={() => loadItems()}>
-                手动刷新
-              </button>
-            </div>
-            <p className="helper-text">共 {itemsData.total} 条，按最新记录倒序展示。</p>
-            {itemsError ? <div className="error-banner">{itemsError}</div> : null}
-            {loadingItems ? (
-              <div className="empty-state">结构化结果加载中...</div>
-            ) : (
-              <RecordList
-                items={itemsData.items}
-                emptyText="暂无结构化结果。"
-                renderMeta={(item) => (
-                  <>
-                    <span>ID：{item.id}</span>
-                    <span>更新时间：{formatTime(item.updated_at)}</span>
-                  </>
-                )}
-              />
-            )}
-          </section>
-        </>
-      )}
-
-      {activeView === "risk" && (
-        <section className="panel">
-          <SectionHeader
-            title="避雷结果"
-            description="查看历史 warning 命中结果，并为后续避雷详情页提供真实数据来源。"
-            actions={
-              <>
-                <a className="ghost-link" href={warningExportJsonUrl} target="_blank" rel="noreferrer">
-                  导出 JSON
-                </a>
-                <a className="ghost-link" href={warningExportCsvUrl} target="_blank" rel="noreferrer">
-                  导出 CSV
-                </a>
-              </>
-            }
-          />
-          <div className="filter-row">
-            <select
-              value={warningFilters.category}
-              onChange={(event) =>
-                setWarningFilters((current) => ({ ...current, category: event.target.value }))
-              }
-            >
-              {CATEGORY_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <input
-              value={warningFilters.keyword}
-              placeholder="搜索名称、地点、摘要、warning 文案"
-              onChange={(event) =>
-                setWarningFilters((current) => ({ ...current, keyword: event.target.value }))
-              }
-            />
-            <button type="button" className="secondary-button" onClick={() => loadWarnings()}>
-              手动刷新
+        <section className="stack-section">
+          <div className="stack-header">
+            <h3>warning 卡片</h3>
+            <button type="button" className="ghost-button small" onClick={onOpenRisk}>
+              查看全部
             </button>
           </div>
-          <p className="helper-text">共 {warningsData.total} 条，支持分类筛选和关键词检索。</p>
-          {warningsError ? <div className="error-banner">{warningsError}</div> : null}
-          {loadingWarnings ? (
-            <div className="empty-state">避雷结果加载中...</div>
-          ) : (
-            <RecordList
-              items={warningsData.items}
-              emptyText="暂无避雷结果。"
-              renderMeta={(item) => (
-                <>
-                  <span>结构化记录 ID：{item.structured_item_id}</span>
-                  <span>匹配方式：{item.matched_by}</span>
-                </>
-              )}
-              renderExtra={(item) => (
-                <div className="warning-detail">
-                  <p>{item.warning_summary}</p>
-                  <ul className="pill-list">
-                    {(item.execution_tips || []).map((tip) => (
-                      <li key={tip}>{tip}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            />
-          )}
+          {warnings.length ? warnings.map((item) => <WarningCard key={item.id} item={item} compact />) : <EmptyCard text="当前未命中 warning" />}
         </section>
-      )}
-    </main>
+      </div>
+    </div>
+  );
+}
+
+function RiskOverlay({
+  warnings,
+  warningsTotal,
+  warningFilters,
+  warningExportJsonUrl,
+  warningExportCsvUrl,
+  warningsError,
+  loadingWarnings,
+  onFilterChange,
+}) {
+  return (
+    <div className="overlay-card overlay-risk">
+      <div className="overlay-header">
+        <div>
+          <span className="overlay-kicker">避雷详情</span>
+          <h2>warning 结果</h2>
+        </div>
+        <div className="link-actions">
+          <a href={warningExportJsonUrl} target="_blank" rel="noreferrer">
+            JSON
+          </a>
+          <a href={warningExportCsvUrl} target="_blank" rel="noreferrer">
+            CSV
+          </a>
+        </div>
+      </div>
+
+      <div className="filter-strip">
+        <select
+          value={warningFilters.category}
+          onChange={(event) =>
+            onFilterChange((current) => ({
+              ...current,
+              category: event.target.value,
+            }))
+          }
+        >
+          {CATEGORY_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        <input
+          value={warningFilters.keyword}
+          placeholder="搜索名称或提示"
+          onChange={(event) =>
+            onFilterChange((current) => ({
+              ...current,
+              keyword: event.target.value,
+            }))
+          }
+        />
+      </div>
+
+      <p className="overlay-copy">当前共 {warningsTotal} 条 warning 记录{loadingWarnings ? "，正在刷新中" : ""}。</p>
+      {warningsError ? <p className="inline-error">{warningsError}</p> : null}
+
+      <div className="scroll-region risk-scroll">
+        {warnings.length ? warnings.map((item) => <WarningCard key={item.id} item={item} />) : <EmptyCard text="暂无 warning 结果" />}
+      </div>
+    </div>
+  );
+}
+
+function StaticOverlay({ title, message }) {
+  return (
+    <div className="overlay-card overlay-static">
+      <span className="overlay-kicker">静态展示</span>
+      <h2>{title}</h2>
+      <p className="overlay-copy">{message}</p>
+    </div>
+  );
+}
+
+function StructuredCard({ item }) {
+  return (
+    <article className="content-card">
+      <div className="content-head">
+        <span className="content-tag">{item.category}</span>
+        <span className="content-time">{formatTime(item.updated_at)}</span>
+      </div>
+      <h4>{item.name}</h4>
+      <p className="content-location">{item.location}</p>
+      <p className="content-summary">{item.summary}</p>
+    </article>
+  );
+}
+
+function WarningCard({ item, compact = false }) {
+  return (
+    <article className={compact ? "content-card warning-card compact" : "content-card warning-card"}>
+      <div className="content-head">
+        <span className="content-tag">{item.category}</span>
+        <span className="content-time">{item.matched_by}</span>
+      </div>
+      <h4>{item.name}</h4>
+      <p className="content-location">{item.location}</p>
+      <p className="content-summary">{item.warning_summary}</p>
+      {!compact && item.execution_tips?.length ? (
+        <ul className="tip-list">
+          {item.execution_tips.map((tip) => (
+            <li key={`${item.id}-${tip}`}>{tip}</li>
+          ))}
+        </ul>
+      ) : null}
+    </article>
+  );
+}
+
+function EmptyCard({ text }) {
+  return <div className="empty-card">{text}</div>;
+}
+
+function Metric({ label, value }) {
+  return (
+    <div className="metric-card">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function Hotspot({ rect, label, onClick }) {
+  const [left, top, width, height] = rect;
+
+  return (
+    <button
+      className="hotspot"
+      aria-label={label}
+      onClick={onClick}
+      style={{
+        left: `${left}%`,
+        top: `${top}%`,
+        width: `${width}%`,
+        height: `${height}%`,
+      }}
+    />
   );
 }
