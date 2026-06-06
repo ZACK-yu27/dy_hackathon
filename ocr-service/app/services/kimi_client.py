@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import io
 import json
 import logging
+import os
 import re
 from pathlib import Path
 
+import fitz
 import httpx
+import pytesseract
+from PIL import Image, ImageOps
 
 from app.config import get_settings
 from app.schemas import KimiExtractionResult, StructuredItemInput
@@ -40,34 +45,36 @@ STRUCTURED_OUTPUT_PROMPT = """
 class KimiClient:
     def __init__(self) -> None:
         settings = get_settings()
-        if not settings.kimi_api_key:
-            raise RuntimeError("Kimi API key is not configured.")
-        self.api_key = settings.kimi_api_key
-        self.base_url = settings.kimi_base_url.rstrip("/")
-        self.model = settings.kimi_model
+        if not settings.deepseek_api_key:
+            raise RuntimeError("DeepSeek API key is not configured.")
+        tesseract_path = Path(settings.tesseract_cmd)
+        if not tesseract_path.exists():
+            raise RuntimeError(f"Tesseract executable not found: {tesseract_path}")
+        tessdata_path = Path(settings.tessdata_prefix)
+        if not tessdata_path.exists():
+            raise RuntimeError(f"Tesseract tessdata directory not found: {tessdata_path}")
+
+        self.deepseek_api_key = settings.deepseek_api_key
+        self.deepseek_base_url = settings.deepseek_base_url.rstrip("/")
+        self.deepseek_model = settings.deepseek_model
+        self.ocr_language = settings.ocr_language
+        self.tesseract_config = settings.tesseract_config
         self.timeout = httpx.Timeout(120.0, connect=30.0)
 
+        pytesseract.pytesseract.tesseract_cmd = str(tesseract_path)
+        os.environ["TESSDATA_PREFIX"] = str(tessdata_path)
+
     def extract_file_text(self, file_path: Path) -> KimiExtractionResult:
-        logger.info("Uploading file to Kimi for OCR/file extraction: %s", file_path.name)
-        with httpx.Client(timeout=self.timeout) as client:
-            with file_path.open("rb") as file_obj:
-                upload_response = client.post(
-                    self._api_url("/files"),
-                    headers=self._headers(),
-                    data={"purpose": "file-extract"},
-                    files={"file": (file_path.name, file_obj)},
-                )
-            upload_response.raise_for_status()
-            file_id = upload_response.json()["id"]
+        logger.info("Running local OCR extraction for %s", file_path.name)
+        suffix = file_path.suffix.lower()
+        if suffix == ".pdf":
+            extracted_text = self._extract_pdf_text(file_path)
+        else:
+            extracted_text = self._extract_image_text(file_path)
 
-            content_response = client.get(
-                self._api_url(f"/files/{file_id}/content"),
-                headers=self._headers(),
-            )
-            content_response.raise_for_status()
-            file_content = content_response.text
-
-        return KimiExtractionResult(extracted_text=file_content.strip(), file_id=file_id)
+        normalized = self._normalize_text(extracted_text)
+        logger.info("Local OCR finished for %s with %s characters", file_path.name, len(normalized))
+        return KimiExtractionResult(extracted_text=normalized, file_id=None)
 
     def structure_text(self, extracted_text: str, context_text: str | None = None) -> list[StructuredItemInput]:
         merged_context = extracted_text.strip()
@@ -76,11 +83,13 @@ class KimiClient:
 
         with httpx.Client(timeout=self.timeout) as client:
             response = client.post(
-                self._api_url("/chat/completions"),
-                headers=self._headers(),
+                self._deepseek_api_url("/chat/completions"),
+                headers=self._deepseek_headers(),
                 json={
-                    "model": self.model,
+                    "model": self.deepseek_model,
                     "temperature": 0.1,
+                    "response_format": {"type": "json_object"},
+                    "thinking": {"type": "disabled"},
                     "messages": [
                         {"role": "system", "content": STRUCTURED_OUTPUT_PROMPT},
                         {"role": "user", "content": merged_context},
@@ -93,13 +102,61 @@ class KimiClient:
         items = payload.get("items", [])
         return [StructuredItemInput.model_validate(item) for item in items]
 
-    def _headers(self) -> dict[str, str]:
+    def _extract_image_text(self, file_path: Path) -> str:
+        image = Image.open(file_path).convert("RGB")
+        return self._ocr_image(image)
+
+    def _extract_pdf_text(self, file_path: Path) -> str:
+        document = fitz.open(file_path)
+        page_texts: list[str] = []
+        try:
+            for index in range(document.page_count):
+                page = document.load_page(index)
+                pixmap = page.get_pixmap(dpi=250, alpha=False)
+                image = Image.open(io.BytesIO(pixmap.tobytes("png"))).convert("RGB")
+                text = self._ocr_image(image)
+                if text:
+                    page_texts.append(text)
+        finally:
+            document.close()
+        return "\n\n".join(page_texts)
+
+    def _ocr_image(self, image: Image.Image) -> str:
+        prepared = self._prepare_image(image)
+        candidates = [
+            self.tesseract_config,
+            f"{self.tesseract_config} --psm 11",
+        ]
+        results = []
+        for config in candidates:
+            text = pytesseract.image_to_string(
+                prepared,
+                lang=self.ocr_language,
+                config=config,
+            )
+            results.append(self._normalize_text(text))
+        return max(results, key=len, default="")
+
+    @staticmethod
+    def _prepare_image(image: Image.Image) -> Image.Image:
+        grayscale = ImageOps.autocontrast(image.convert("L"))
+        width, height = grayscale.size
+        scaled = grayscale.resize((max(width * 2, 1), max(height * 2, 1)))
+        return scaled
+
+    @staticmethod
+    def _normalize_text(text: str) -> str:
+        lines = [line.strip() for line in text.replace("\r", "\n").split("\n")]
+        return "\n".join(line for line in lines if line)
+
+    def _deepseek_headers(self) -> dict[str, str]:
         return {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {self.deepseek_api_key}",
+            "Content-Type": "application/json",
         }
 
-    def _api_url(self, path: str) -> str:
-        return f"{self.base_url}{path}"
+    def _deepseek_api_url(self, path: str) -> str:
+        return f"{self.deepseek_base_url}{path}"
 
     @staticmethod
     def _extract_json_payload(content: str) -> dict:
@@ -113,5 +170,5 @@ class KimiClient:
         except json.JSONDecodeError:
             brace_match = re.search(r"(\{[\s\S]*\})", text)
             if not brace_match:
-                raise ValueError("Kimi did not return valid JSON.")
+                raise ValueError("DeepSeek did not return valid JSON.")
             return json.loads(brace_match.group(1))

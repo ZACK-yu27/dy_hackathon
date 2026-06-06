@@ -1,168 +1,209 @@
-# OCR Service Real Test Report
+# OCR Service 实测报告
 
-## 1. Test Objective
+## 1. 目标
 
-Start `ocr-service`, use the images in `d:\Dev\projects\dy-hackathon\mock_pics\` for real uploads, record the full execution process, and verify whether the pipeline `image -> Kimi extraction -> Kimi structuring -> MySQL` can complete successfully.
+按“方案二”将链路改为：
 
-## 2. Test Environment
+`图片/PDF -> 本地 Tesseract OCR -> DeepSeek 结构化 -> MySQL`
 
-- Project root: `d:\Dev\projects\dy-hackathon`
-- Service directory: `d:\Dev\projects\dy-hackathon\ocr-service`
-- Test image directory: `d:\Dev\projects\dy-hackathon\mock_pics`
-- Service URL: `http://127.0.0.1:8012`
-- Health check result:
+并使用 `d:\Dev\projects\dy-hackathon\mock_pics\` 下的 9 张图片做真实上传测试，记录运行结果并验证是否成功入库。
+
+## 2. 最终方案
+
+本轮最终采用如下实现：
+
+1. 文件文本提取：本地 `Tesseract OCR`
+2. 结构化抽取：`DeepSeek API`
+3. 存储：`MySQL`
+4. 服务：`FastAPI`
+
+核心代码调整：
+
+- `d:\Dev\projects\dy-hackathon\ocr-service\app\services\kimi_client.py`
+  - `extract_file_text()` 改为本地 OCR，不再调用 Kimi 文件接口
+  - `structure_text()` 改为调用 DeepSeek `chat/completions`
+- `d:\Dev\projects\dy-hackathon\ocr-service\app\config.py`
+  - 增加 DeepSeek、本地 Tesseract 配置
+- `d:\Dev\projects\dy-hackathon\ocr-service\app\main.py`
+  - 健康检查返回当前实际后端信息
+- `d:\Dev\projects\dy-hackathon\ocr-service\pyproject.toml`
+  - 补充 `pytesseract`、`pillow`、`pymupdf`
+- `d:\Dev\projects\dy-hackathon\ocr-service\.env`
+- `d:\Dev\projects\dy-hackathon\ocr-service\.env.example`
+
+## 3. 环境信息
+
+- 项目根目录：`d:\Dev\projects\dy-hackathon`
+- 服务目录：`d:\Dev\projects\dy-hackathon\ocr-service`
+- 测试图片目录：`d:\Dev\projects\dy-hackathon\mock_pics`
+- 本地 Tesseract：`D:\software\Tesseract-OCR\tesseract.exe`
+- Tesseract 语言包：`chi_sim`、`eng`、`osd`
+- 服务地址：`http://127.0.0.1:8015`
+- 原始结果文件：`d:\Dev\projects\dy-hackathon\ocr-service\artifacts\test_runs\mock_pics_test_results.json`
+
+健康检查结果：
 
 ```json
 {
   "status": "ok",
   "service": "Travel Structured Ingestion Service",
-  "port": 8012,
-  "model": "kimi-for-coding",
+  "port": 8015,
+  "extraction_backend": "local_tesseract",
+  "ocr_language": "chi_sim+eng",
+  "structuring_model": "deepseek-v4-flash",
   "database_configured": true
 }
 ```
 
-- Database baseline before test:
-  - `travel_structured_items.max_id = 0`
-  - `travel_structured_items.total = 0`
+## 4. 过程记录
 
-## 3. Test Process
+### 4.1 前置问题
 
-### 3.1 Service Startup Confirmation
+此前尝试过：
 
-Verified `GET /health` on port `8012`; service is running normally and MySQL is configured.
+1. Kimi Code 接口直接做文件抽取，返回 `404`
+2. 切到开放平台文件接口后，返回 `401`
 
-### 3.2 First Request Attempt
+结论是：当前提供的 Kimi Code key 不能直接用于开放平台文件 OCR，所以改为方案二。
 
-The first batch request used PowerShell `Invoke-RestMethod -Form`, but the current PowerShell environment does not support the `-Form` parameter. This was an environment/tooling issue, not a service-side failure.
+### 4.2 本地 OCR 验证
 
-Observed error:
+先直接调用类方法验证本地 OCR 与 DeepSeek 结构化：
 
-```text
-找不到与参数名称“Form”匹配的参数。
-```
+- 本地 OCR 成功抽出文本，首张图片识别文本长度为 `681`
+- DeepSeek 结构化成功返回多个 `items`
 
-### 3.3 Formal Real Test Method
+随后再做单张接口测试：
 
-To avoid PowerShell multipart compatibility issues and preserve complete records, I added and executed the script below:
+- 文件：`微信图片_20260606194611_493_141.jpg`
+- 接口返回：`200`
+- 单张入库条数：`9`
 
-- Test runner: `d:\Dev\projects\dy-hackathon\ocr-service\scripts\run_mock_pics_test.py`
-- Raw result artifact: `d:\Dev\projects\dy-hackathon\ocr-service\artifacts\test_runs\mock_pics_test_results.json`
+说明本地 OCR + DeepSeek + MySQL 主链路已打通。
 
-Script behavior:
+### 4.3 全量 9 张图片实测
 
-1. Read database baseline.
-2. Re-check `GET /health`.
-3. Upload the 9 JPG files in `mock_pics` one by one to `POST /ingest/upload`.
-4. Record request start time, elapsed time, HTTP status code, and response payload/error detail.
-5. Query MySQL again after the run and compare inserted rows.
+使用脚本：
 
-## 4. Test Summary
+- `d:\Dev\projects\dy-hackathon\ocr-service\scripts\run_mock_pics_test.py`
 
-- Test image count: `9`
-- Successful requests: `0`
-- Failed requests: `9`
-- Average single-request elapsed time: about `6.007s`
-- Database rows before test: `0`
-- Database rows after test: `0`
-- Newly inserted rows: `0`
+对 `mock_pics` 中 9 张图片顺序调用 `POST /ingest/upload`，并在结束后回查数据库。
 
-Conclusion: local service availability is normal, but all real image uploads failed in the Kimi file extraction stage. The pipeline did not reach structuring or MySQL insertion.
+## 5. 最终结果
 
-## 5. Detailed Results
+- 测试图片数：`9`
+- 请求成功数：`9`
+- 请求失败数：`0`
+- 平均单张耗时：`15.669s`
+- 批量测试前数据库：`60` 行
+- 批量测试后数据库：`109` 行
+- 本轮批量测试新增入库：`49` 行
 
-| File | Start Time | Elapsed (s) | HTTP | Result |
-| --- | --- | ---: | ---: | --- |
-| `微信图片_20260606194611_493_141.jpg` | `2026-06-06T19:56:55` | `6.108` | `500` | Kimi `GET /files/{file_id}/content` returned `404` |
-| `微信图片_20260606194613_494_141.jpg` | `2026-06-06T19:57:01` | `6.301` | `500` | Kimi `GET /files/{file_id}/content` returned `404` |
-| `微信图片_20260606194617_495_141.jpg` | `2026-06-06T19:57:07` | `6.163` | `500` | Kimi `GET /files/{file_id}/content` returned `404` |
-| `微信图片_20260606194622_496_141.jpg` | `2026-06-06T19:57:13` | `6.021` | `500` | Kimi `GET /files/{file_id}/content` returned `404` |
-| `微信图片_20260606194631_497_141.jpg` | `2026-06-06T19:57:19` | `5.804` | `500` | Kimi `GET /files/{file_id}/content` returned `404` |
-| `微信图片_20260606194637_498_141.jpg` | `2026-06-06T19:57:25` | `5.940` | `500` | Kimi `GET /files/{file_id}/content` returned `404` |
-| `微信图片_20260606194639_499_141.jpg` | `2026-06-06T19:57:31` | `5.680` | `500` | Kimi `GET /files/{file_id}/content` returned `404` |
-| `微信图片_20260606194641_500_141.jpg` | `2026-06-06T19:57:37` | `5.982` | `500` | Kimi `GET /files/{file_id}/content` returned `404` |
-| `微信图片_20260606194643_501_141.jpg` | `2026-06-06T19:57:43` | `6.064` | `500` | Kimi `GET /files/{file_id}/content` returned `404` |
+说明：
 
-Representative response:
+- `before_db.total = 60` 不是空库，因为在正式批量测试前已经做了多次单张验证和局部测试。
+- 本轮批量脚本自身新增记录数为 `49`，且 `9/9` 图片全部返回 `200`。
 
-```json
-{
-  "detail": "Ingest processing failed: Client error '404 Not Found' for url 'https://api.kimi.com/coding/v1/files/fak1p5b8obbi11gt7yii/content'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
-}
-```
+## 6. 分图结果
 
-## 6. Database Verification
+| 图片 | HTTP | 耗时（秒） | 抽取条数 |
+| --- | ---: | ---: | ---: |
+| `微信图片_20260606194611_493_141.jpg` | `200` | `19.048` | `8` |
+| `微信图片_20260606194613_494_141.jpg` | `200` | `16.391` | `3` |
+| `微信图片_20260606194617_495_141.jpg` | `200` | `17.353` | `6` |
+| `微信图片_20260606194622_496_141.jpg` | `200` | `15.721` | `6` |
+| `微信图片_20260606194631_497_141.jpg` | `200` | `12.612` | `2` |
+| `微信图片_20260606194637_498_141.jpg` | `200` | `13.792` | `5` |
+| `微信图片_20260606194639_499_141.jpg` | `200` | `14.827` | `11` |
+| `微信图片_20260606194641_500_141.jpg` | `200` | `15.776` | `4` |
+| `微信图片_20260606194643_501_141.jpg` | `200` | `15.498` | `4` |
 
-MySQL verification result:
+## 7. 入库核对
 
-- Before test:
+批量脚本记录到的数据库变化：
 
 ```json
 {
-  "max_id": 0,
-  "total": 0
+  "before_db": {
+    "max_id": 60,
+    "total": 60
+  },
+  "after_db": {
+    "max_id": 109,
+    "total": 109
+  }
 }
 ```
 
-- After test:
+本轮新增的部分样例：
 
 ```json
-{
-  "max_id": 0,
-  "total": 0
-}
+[
+  {
+    "id": 61,
+    "category": "景点",
+    "name": "广东省博物馆",
+    "location": "广州市天河区",
+    "summary": "广东省博物馆是了解岭南文化的重要场所，馆藏丰富。"
+  },
+  {
+    "id": 68,
+    "category": "交通",
+    "name": "珠江夜游",
+    "location": "广州市",
+    "summary": "珠江夜游是广州特色游览项目，可欣赏两岸灯光夜景。"
+  },
+  {
+    "id": 86,
+    "category": "住宿",
+    "name": "天河区珠江新城/体育西",
+    "location": "广州市天河区珠江新城/体育西",
+    "summary": "靠近花城广场、广州塔等商业地标，逛街购物和夜景观赏极为便利。"
+  },
+  {
+    "id": 102,
+    "category": "饮食",
+    "name": "牛杂店",
+    "location": "广州市-未明确区域",
+    "summary": "这家牛杂店料足味美，里面满满牛杂，还加新鲜牛肉，非常好吃。"
+  }
+]
 ```
 
-- Inserted rows returned by query: `[]`
+## 8. 质量观察
 
-Conclusion: no structured data was written into `travel_structured_items`.
+方案二已成功跑通，但仍存在可预期的 OCR 噪声：
 
-## 7. Failure Location and Analysis
+1. 原始 `extracted_text` 中仍有较多错字、空格断裂、英文噪声
+2. DeepSeek 结构化后整体可用，但个别地点粒度较粗
+3. 同类截图可能产生重复记录，当前链路未做去重
+4. 个别内容会被模型补全为合理地点或分类，结果偏“可用优先”
 
-The failure is not in FastAPI upload reception, file temporary storage, or MySQL connection. The common failure point is the Kimi extraction client:
+换句话说：
 
-- File upload is sent to `POST /files`
-- The returned `file_id` is then used to request `GET /files/{file_id}/content`
-- All 9 requests fail at this second step with `404 Not Found`
+- 链路已打通
+- 结果可入库
+- 精度还有继续优化空间
 
-Current code location:
+## 9. 结论
 
-- `d:\Dev\projects\dy-hackathon\ocr-service\app\services\kimi_client.py`
-- Relevant logic:
+方案二执行成功。
 
-```python
-upload_response = client.post(
-    self._api_url("/files"),
-    headers=self._headers(),
-    data={"purpose": "file-extract"},
-    files={"file": (file_path.name, file_obj)},
-)
-upload_response.raise_for_status()
-file_id = upload_response.json()["id"]
+当前 `ocr-service` 已可以在本地完成：
 
-content_response = client.get(
-    self._api_url(f"/files/{file_id}/content"),
-    headers=self._headers(),
-)
-content_response.raise_for_status()
-```
+`图片上传 -> 本地 OCR 提取 -> DeepSeek 结构化 -> MySQL 入库`
 
-Current judgment:
+并且 `mock_pics` 的 9 张真实图片已经全部跑通，HTTP 成功率 `100%`，本轮批量新增入库 `49` 条。
 
-1. The upload request likely succeeds because a `file_id` is returned each time.
-2. The endpoint or calling sequence for reading extracted content is likely incorrect for the current Kimi API.
-3. Another possibility is that file extraction is asynchronous and the service should poll a status endpoint first instead of immediately calling `/content`.
-4. Because every image shows the same pattern and the database remains unchanged, this is a systemic integration issue, not a single-image quality issue.
+## 10. 交付物
 
-## 8. Deliverables Produced
+- 测试报告：`d:\Dev\projects\dy-hackathon\test_report.md`
+- 批量原始结果：`d:\Dev\projects\dy-hackathon\ocr-service\artifacts\test_runs\mock_pics_test_results.json`
+- 单张接口结果：`d:\Dev\projects\dy-hackathon\ocr-service\artifacts\test_runs\single_local_ocr_response.json`
 
-- Report file: `d:\Dev\projects\dy-hackathon\test_report.md`
-- Raw structured test result: `d:\Dev\projects\dy-hackathon\ocr-service\artifacts\test_runs\mock_pics_test_results.json`
-- Test runner script: `d:\Dev\projects\dy-hackathon\ocr-service\scripts\run_mock_pics_test.py`
+## 11. 后续建议
 
-## 9. Next Recommended Actions
-
-1. Verify the latest Kimi file extraction API documentation and confirm the correct post-upload retrieval endpoint.
-2. Check whether the returned `file_id` needs a separate extraction task query or status polling before content retrieval.
-3. Add explicit logging for Kimi upload response payloads so the exact API contract can be compared against the current code.
-4. After correcting the Kimi extraction logic, rerun the same script to confirm OCR text extraction, structuring, and MySQL insertion all succeed.
+1. 增加去重逻辑，避免同一景点在多张截图中重复入库
+2. 为 OCR 文本增加清洗规则，如去异常空格、统一标点
+3. 对 `summary/location` 增加更严格的后校验
+4. 如后续需要更高识别率，可考虑对图片做裁剪、锐化或版面分块后再 OCR

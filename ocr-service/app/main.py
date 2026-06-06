@@ -43,6 +43,8 @@ def health():
         "status": "ok",
         "service": settings.app_name,
         "port": settings.app_port,
-        "model": settings.kimi_model,
+        "extraction_backend": "local_tesseract",
+        "ocr_language": settings.ocr_language,
+        "structuring_model": settings.deepseek_model,
         "database_configured": bool(settings.database_url),
     }

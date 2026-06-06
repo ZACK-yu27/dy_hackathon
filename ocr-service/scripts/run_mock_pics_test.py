@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import mimetypes
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -17,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MOCK_PICS_DIR = ROOT / "mock_pics"
 OUTPUT_DIR = ROOT / "ocr-service" / "artifacts" / "test_runs"
 OUTPUT_FILE = OUTPUT_DIR / "mock_pics_test_results.json"
-BASE_URL = "http://127.0.0.1:8012"
+BASE_URL = os.getenv("OCR_TEST_BASE_URL", "http://127.0.0.1:8012")
 
 
 def get_db_baseline() -> dict[str, int]:

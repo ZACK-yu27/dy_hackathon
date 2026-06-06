@@ -50,6 +50,8 @@ class UploadIngestResponse(BaseModel):
     file_type: Literal["image", "pdf"]
     extracted_text: str
     item_count: int
+    saved_count: int
+    deduplicated_count: int
     items: list[StructuredItemRecord] = Field(default_factory=list)
 
 

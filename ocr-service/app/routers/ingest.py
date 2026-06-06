@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import csv
+import io
 import logging
 from pathlib import Path
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -73,7 +76,47 @@ async def upload_and_ingest(
 @router.get("/items", response_model=ListStructuredItemsResponse)
 def list_structured_items(
     limit: int = Query(default=100, ge=1, le=500),
+    category: str | None = Query(default=None),
+    keyword: str | None = Query(default=None),
     db: Session = Depends(get_db_session),
 ):
-    items = service.list_items(db=db, limit=limit)
+    items = service.list_items(
+        db=db,
+        limit=limit,
+        category=category,
+        keyword=keyword,
+    )
     return ListStructuredItemsResponse(total=len(items), items=items)
+
+
+@router.get("/export")
+def export_structured_items(
+    format: str = Query(default="json", pattern="^(json|csv)$"),
+    limit: int = Query(default=1000, ge=1, le=5000),
+    category: str | None = Query(default=None),
+    keyword: str | None = Query(default=None),
+    db: Session = Depends(get_db_session),
+):
+    items = service.export_items(
+        db=db,
+        limit=limit,
+        category=category,
+        keyword=keyword,
+    )
+    payload = [item.model_dump(mode="json") for item in items]
+    if format == "json":
+        return {"total": len(payload), "items": payload}
+
+    buffer = io.StringIO()
+    writer = csv.DictWriter(
+        buffer,
+        fieldnames=["id", "category", "name", "location", "summary", "created_at", "updated_at"],
+    )
+    writer.writeheader()
+    writer.writerows(payload)
+    csv_content = buffer.getvalue()
+    return Response(
+        content=csv_content,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=travel_structured_items.csv"},
+    )
