@@ -34,12 +34,16 @@ def create_tables() -> None:
     Base.metadata.create_all(bind=engine)
 
 
-def get_db_session() -> Generator[Session, None, None]:
+def create_db_session() -> Session:
     global _session_factory
     if _session_factory is None:
         get_engine()
     assert _session_factory is not None
-    session = _session_factory()
+    return _session_factory()
+
+
+def get_db_session() -> Generator[Session, None, None]:
+    session = create_db_session()
     try:
         yield session
     finally:

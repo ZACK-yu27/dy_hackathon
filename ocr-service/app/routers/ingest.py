@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.database import get_db_session
-from app.schemas import ListStructuredItemsResponse
+from app.schemas import ListStructuredItemsResponse, ListWarningsResponse
 from app.services.ingest_service import IngestService
 
 router = APIRouter(prefix="/ingest", tags=["ingest"])
@@ -119,4 +119,66 @@ def export_structured_items(
         content=csv_content,
         media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition": "attachment; filename=travel_structured_items.csv"},
+    )
+
+
+@router.get("/warnings", response_model=ListWarningsResponse)
+def list_warning_items(
+    limit: int = Query(default=100, ge=1, le=500),
+    category: str | None = Query(default=None),
+    keyword: str | None = Query(default=None),
+    db: Session = Depends(get_db_session),
+):
+    items = service.warning_service.list_warnings(
+        db=db,
+        limit=limit,
+        category=category,
+        keyword=keyword,
+    )
+    return ListWarningsResponse(total=len(items), items=items)
+
+
+@router.get("/export-warnings")
+def export_warning_items(
+    format: str = Query(default="json", pattern="^(json|csv)$"),
+    limit: int = Query(default=1000, ge=1, le=5000),
+    category: str | None = Query(default=None),
+    keyword: str | None = Query(default=None),
+    db: Session = Depends(get_db_session),
+):
+    items = service.warning_service.export_warnings(
+        db=db,
+        limit=limit,
+        category=category,
+        keyword=keyword,
+    )
+    payload = [item.model_dump(mode="json") for item in items]
+    if format == "json":
+        return {"total": len(payload), "items": payload}
+
+    buffer = io.StringIO()
+    writer = csv.DictWriter(
+        buffer,
+        fieldnames=[
+            "id",
+            "structured_item_id",
+            "warning_source_id",
+            "category",
+            "name",
+            "location",
+            "summary",
+            "warning_summary",
+            "matched_by",
+            "created_at",
+            "updated_at",
+        ],
+        extrasaction="ignore",
+    )
+    writer.writeheader()
+    writer.writerows(payload)
+    csv_content = buffer.getvalue()
+    return Response(
+        content=csv_content,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=travel_warning_items.csv"},
     )

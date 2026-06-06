@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.models import TravelStructuredItem
 from app.schemas import StructuredItemInput, StructuredItemRecord, UploadIngestResponse
 from app.services.kimi_client import KimiClient
+from app.services.warning_service import WarningService
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 class IngestService:
     def __init__(self) -> None:
         self.kimi_client = KimiClient()
+        self.warning_service = WarningService()
 
     def ingest_file(
         self,
@@ -35,13 +37,20 @@ class IngestService:
         cleaned_items = [self._clean_item(item) for item in structured_items]
 
         saved_items, deduplicated_count = self._persist_items(db=db, items=cleaned_items)
+        hydrated_items = self._resolve_items(db=db, items=cleaned_items)
+        warnings, warning_saved_count = self.warning_service.match_and_persist(
+            db=db,
+            items=hydrated_items,
+        )
         logger.info(
-            "Ingested file=%s file_id=%s item_count=%s saved_count=%s deduplicated_count=%s",
+            "Ingested file=%s file_id=%s item_count=%s saved_count=%s deduplicated_count=%s warning_count=%s warning_saved_count=%s",
             file_name,
             extraction.file_id,
             len(cleaned_items),
             len(saved_items),
             deduplicated_count,
+            len(warnings),
+            warning_saved_count,
         )
         return UploadIngestResponse(
             status="success",
@@ -52,6 +61,9 @@ class IngestService:
             saved_count=len(saved_items),
             deduplicated_count=deduplicated_count,
             items=saved_items,
+            warning_count=len(warnings),
+            warning_saved_count=warning_saved_count,
+            warnings=warnings,
         )
 
     def list_items(
@@ -139,6 +151,24 @@ class IngestService:
             db.refresh(record)
 
         return [StructuredItemRecord.model_validate(record) for record in records], deduplicated_count
+
+    def _resolve_items(self, db: Session, items: list[StructuredItemInput]) -> list[StructuredItemRecord]:
+        if not items:
+            return []
+
+        target_keys = {self._dedupe_key(item.category, item.name, item.location) for item in items}
+        records = (
+            db.query(TravelStructuredItem)
+            .filter(TravelStructuredItem.name.in_([item.name for item in items]))
+            .filter(TravelStructuredItem.category.in_([item.category for item in items]))
+            .all()
+        )
+        matched_records = []
+        for record in records:
+            record_key = self._dedupe_key(record.category, record.name, record.location)
+            if record_key in target_keys:
+                matched_records.append(record)
+        return [StructuredItemRecord.model_validate(record) for record in matched_records]
 
     @classmethod
     def _clean_item(cls, item: StructuredItemInput) -> StructuredItemInput:

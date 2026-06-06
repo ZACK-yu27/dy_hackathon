@@ -39,6 +39,50 @@ class StructuredItemRecord(StructuredItemInput):
     model_config = {"from_attributes": True}
 
 
+class WarningSourceSeed(BaseModel):
+    source_id: str
+    category: str
+    name: str
+    city: str = ""
+    area: str = ""
+    title: str = ""
+    summary: str
+    avoid_reasons: list[str] = Field(default_factory=list)
+    recommend_reasons: list[str] = Field(default_factory=list)
+    execution_tips: list[str] = Field(default_factory=list)
+    alternatives: list[str] = Field(default_factory=list)
+    confirm_before_go: list[str] = Field(default_factory=list)
+    budget_info: str = ""
+    traffic_info: str = ""
+    subcategory: str = ""
+    evidence: str = ""
+    source_platform: str = ""
+    source_keyword: str = ""
+    source_url: str = ""
+    source_type: str = ""
+    confidence: str = ""
+    source_summary: str = ""
+    evidence_count: int = 0
+
+
+class WarningRecord(BaseModel):
+    id: int
+    structured_item_id: int
+    warning_source_id: int
+    category: str
+    name: str
+    location: str
+    summary: str
+    warning_summary: str
+    avoid_reasons: list[str] = Field(default_factory=list)
+    execution_tips: list[str] = Field(default_factory=list)
+    alternatives: list[str] = Field(default_factory=list)
+    confirm_before_go: list[str] = Field(default_factory=list)
+    matched_by: str
+    created_at: datetime
+    updated_at: datetime
+
+
 class KimiExtractionResult(BaseModel):
     extracted_text: str
     file_id: str | None = None
@@ -53,8 +97,16 @@ class UploadIngestResponse(BaseModel):
     saved_count: int
     deduplicated_count: int
     items: list[StructuredItemRecord] = Field(default_factory=list)
+    warning_count: int = 0
+    warning_saved_count: int = 0
+    warnings: list[WarningRecord] = Field(default_factory=list)
 
 
 class ListStructuredItemsResponse(BaseModel):
     total: int
     items: list[StructuredItemRecord] = Field(default_factory=list)
+
+
+class ListWarningsResponse(BaseModel):
+    total: int
+    items: list[WarningRecord] = Field(default_factory=list)
