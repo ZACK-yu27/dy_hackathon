@@ -1,215 +1,358 @@
+import { useEffect, useMemo, useState } from 'react'
 import detailBackIcon from '../../assets/icons/figma-deep/detail-back.svg'
-import detailBannerFlagIcon from '../../assets/icons/figma-deep/detail-banner-flag.svg'
-import detailCardRiskIcon from '../../assets/icons/figma-deep/detail-card-risk.svg'
-import detailCardSightIcon from '../../assets/icons/figma-deep/detail-card-sight.svg'
-import detailCardTimeIcon from '../../assets/icons/figma-deep/detail-card-time.svg'
-import detailClearIcon from '../../assets/icons/figma-deep/detail-clear.svg'
-import detailFitIcon from '../../assets/icons/figma-deep/detail-fit.svg'
-import detailFoodIcon from '../../assets/icons/figma-deep/detail-lib-food.svg'
-import detailHotelIcon from '../../assets/icons/figma-deep/detail-lib-hotel.svg'
-import detailTransportIcon from '../../assets/icons/figma-deep/detail-lib-transport.svg'
-import detailLibraryGridIcon from '../../assets/icons/figma-deep/detail-library-grid.svg'
 import detailMoreIcon from '../../assets/icons/figma-deep/detail-more.svg'
 import detailSendIcon from '../../assets/icons/figma-deep/detail-send.svg'
-import detailZoomMinusIcon from '../../assets/icons/figma-deep/detail-zoom-minus.svg'
-import { DeviceScrollView, DeviceShell, GlyphPlus } from '../../components/TravelUi'
-
-const categories = [
-  { label: '景点', active: true },
-  { label: '餐饮', active: false },
-  { label: '交通', active: false },
-  { label: '住宿', active: false },
-]
-
-const modules = [
-  { title: '外滩夜景', tag: '景点', time: '08:30-09:30', risk: '晚高峰人多', color: '#3488E5', tagColor: '#ECECE6', icon: detailCardSightIcon },
-  { title: '地铁 2 号线', tag: '交通', time: '09:30-10:00', risk: '', color: '#49B3A0', tagColor: '#DFF3EE', icon: detailTransportIcon },
-  { title: '本地小吃店', tag: '餐饮', time: '10:00-11:00', risk: '饭点排队', color: '#73BA8B', tagColor: '#E7F0DA', icon: detailFoodIcon },
-]
-
-const moduleLibrary = [
-  { title: '外滩夜景', color: '#2F85E9', icon: detailCardSightIcon },
-  { title: '豫园', color: '#2F85E9', icon: detailCardSightIcon },
-  { title: '南京东路', color: '#2F85E9', icon: detailCardSightIcon },
-  { title: '地铁 2 号线', color: '#44A89A', icon: detailTransportIcon },
-  { title: '公交 20 路', color: '#44A89A', icon: detailTransportIcon },
-  { title: '本地小吃店', color: '#6BAF97', icon: detailFoodIcon },
-  { title: '老字号餐馆', color: '#6BAF97', icon: detailFoodIcon },
-  { title: '外滩附近酒店', color: '#8B909C', icon: detailHotelIcon },
-]
+import { buildStructuredExportUrl, buildWarningExportUrl, listStructuredItems, listWarnings } from '../../api/ingest'
+import { ApiError } from '../../api/http'
+import { CategoryBadge, EmptyState, NoticeCard, SectionCard, StatusBadge } from '../../components/BusinessUi'
+import { DeviceScrollView, DeviceShell } from '../../components/TravelUi'
+import type { StructuredItemRecord, UploadIngestResponse, WarningRecord } from '../../types/domain'
+import { formatDateTime, formatFileType } from '../../utils/format'
+import { getLatestUpload, getSelectedItem, saveSelectedItem, saveSelectedWarning } from '../../utils/storage'
 
 export default function TravelProjectDetailPage() {
+  const [uploadSnapshot, setUploadSnapshot] = useState<UploadIngestResponse | null>(null)
+  const [selectedItem, setSelectedItem] = useState<StructuredItemRecord | null>(null)
+  const [relatedWarnings, setRelatedWarnings] = useState<WarningRecord[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const params = useMemo(() => new URLSearchParams(window.location.search), [])
+  const requestedItemId = Number(params.get('itemId') ?? '')
+  const requestedSource = params.get('source')
+
+  useEffect(() => {
+    async function loadDetail() {
+      setLoading(true)
+      setError('')
+
+      try {
+        const latest = getLatestUpload()
+        const cachedItem = getSelectedItem()
+
+        if (requestedSource === 'latest' && latest) {
+          setUploadSnapshot(latest)
+          setSelectedItem(latest.items[0] ?? null)
+          setRelatedWarnings(latest.warnings)
+          return
+        }
+
+        if (!requestedItemId && latest) {
+          setUploadSnapshot(latest)
+          setSelectedItem(latest.items[0] ?? null)
+          setRelatedWarnings(latest.warnings)
+          return
+        }
+
+        const itemsResponse = await listStructuredItems({
+          limit: 100,
+          category: cachedItem?.category ?? '',
+          keyword: cachedItem?.name ?? '',
+        })
+
+        const matchedItem =
+          itemsResponse.items.find((item) => item.id === requestedItemId) ??
+          (cachedItem && cachedItem.id === requestedItemId ? cachedItem : null) ??
+          itemsResponse.items[0] ??
+          null
+
+        setSelectedItem(matchedItem)
+
+        if (!matchedItem) {
+          setRelatedWarnings([])
+          return
+        }
+
+        const warningsResponse = await listWarnings({
+          limit: 100,
+          category: matchedItem.category,
+          keyword: matchedItem.name,
+        })
+
+        setRelatedWarnings(
+          warningsResponse.items.filter(
+            (warning) =>
+              warning.structured_item_id === matchedItem.id ||
+              (warning.name === matchedItem.name && warning.category === matchedItem.category),
+          ),
+        )
+      } catch (loadError) {
+        setError(loadError instanceof ApiError ? loadError.detail : '详情数据加载失败，请稍后重试。')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    void loadDetail()
+  }, [requestedItemId, requestedSource])
+
+  const itemExportUrl = buildStructuredExportUrl('json', {
+    limit: 100,
+    category: selectedItem?.category ?? '',
+    keyword: selectedItem?.name ?? '',
+  })
+
+  const warningExportUrl = buildWarningExportUrl('json', {
+    limit: 100,
+    category: selectedItem?.category ?? '',
+    keyword: selectedItem?.name ?? '',
+  })
+
   return (
     <DeviceShell className="bg-[#E7E6DE]">
       <DeviceScrollView>
-        <div className="px-[15px] pb-[14px] pt-4">
-        <section
-          className="relative overflow-hidden rounded-b-[32px] rounded-t-[30px] bg-[#F1F0E9] px-5 pb-[18px] pt-5"
-          style={{
-            boxShadow: '0px 8px 24px rgba(27,29,17,0.08)',
-          }}
-        >
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[136px] rounded-t-[30px] bg-[#F2F1EB]" />
-          <div
-            className="pointer-events-none absolute left-0 top-0 h-[38px] w-full rounded-t-[30px] bg-[#F2F1EB]"
-            style={{ clipPath: 'polygon(0 0, 40% 0, 45% 100%, 100% 100%, 100% 0)' }}
-          />
-          <div className="relative z-10 mb-5 flex items-start justify-between pt-[20px]">
-            <a href="/travel-unpack" className="pt-[10px] text-[#43464D]">
-              <img src={detailBackIcon} alt="" className="h-7 w-7" />
-            </a>
-            <div className="mr-auto ml-4">
-              <h1 className="text-[31px] font-black leading-[42px] text-[#1B1D11]">上海错峰避坑之旅</h1>
-              <p className="mt-[2px] text-[15px] text-[#73776E]">12 模块 / 8 避雷</p>
-            </div>
-            <div className="flex gap-3 pt-[6px]">
-              <button type="button" className="flex h-14 w-14 items-center justify-center rounded-full bg-[#111] text-white shadow-[0px_8px_20px_rgba(27,29,17,0.15)]">
-                <img src={detailSendIcon} alt="" className="h-6 w-6" />
-              </button>
-              <button type="button" className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#777] shadow-[0px_8px_20px_rgba(27,29,17,0.12)]">
-                <img src={detailMoreIcon} alt="" className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
-
-          <div className="relative z-10 flex gap-3 overflow-x-auto pb-[2px]">
-            {categories.map((item) => (
-              <span
-                key={item.label}
-                className={`inline-flex items-center justify-center rounded-full px-[26px] py-[13px] text-[17px] ${
-                  item.active ? 'bg-[#2F85E9] text-white' : 'bg-[#EFEFEA] text-[#5D5F64]'
-                }`}
-              >
-                {item.label}
-              </span>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-[10px] grid grid-cols-[116px_1fr] gap-2">
-          <aside className="rounded-[26px] bg-[#F1F0E9] px-3 py-5 shadow-[0px_8px_24px_rgba(27,29,17,0.08)]">
-            <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-[18px] font-bold text-[#26272F]">模块库</h2>
-              <img src={detailLibraryGridIcon} alt="" className="h-5 w-5" />
-            </div>
-            <div className="space-y-3">
-              {moduleLibrary.map((item) => (
-                <div
-                  key={item.title}
-                  className="flex items-center justify-between rounded-[14px] bg-[#FAF9F5] px-2 py-[11px] text-[#4D525A]"
-                  style={{
-                    boxShadow: `inset 4px 0 0 ${item.color}`,
-                  }}
+        <div className="px-4 pb-8 pt-4">
+          <section className="rounded-[30px] bg-[#F1F0E9] px-5 pb-6 pt-6 shadow-[0px_8px_24px_rgba(27,29,17,0.08)]">
+            <div className="flex items-start justify-between gap-3">
+              <a href="/travel-unpack" className="pt-2 text-[#43464D]">
+                <img src={detailBackIcon} alt="" className="h-7 w-7" />
+              </a>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-[28px] font-black leading-[38px] text-[#1B1D11]">
+                  {selectedItem?.name || uploadSnapshot?.file_name || '结果详情'}
+                </h1>
+                <p className="mt-1 text-sm text-[#73776E]">
+                  {uploadSnapshot
+                    ? `本页优先展示最近一次真实上传返回，共 ${uploadSnapshot.item_count} 条结构化结果 / ${uploadSnapshot.warning_count} 条 warning`
+                    : '当前展示历史查询结果或缓存快照'}
+                </p>
+              </div>
+              <div className="flex gap-3 pt-1">
+                <a
+                  href={itemExportUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-[#111] text-white shadow-[0px_8px_20px_rgba(27,29,17,0.15)]"
                 >
-                  <span className="flex items-center gap-1.5 text-[13px] leading-5">
-                    <img src={item.icon} alt="" className="h-[14px] w-[14px]" />
-                    {item.title}
-                  </span>
-                  <img src={detailMoreIcon} alt="" className="h-[14px] w-[14px] opacity-55" />
-                </div>
-              ))}
-              {indexPlaceholder()}
-            </div>
-          </aside>
-
-          <section className="min-w-0 rounded-[26px] bg-[#F1F0E9] px-3 py-5 shadow-[0px_8px_24px_rgba(27,29,17,0.08)]">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-[18px] font-bold text-[#26272F]">路线脚本</h2>
-                <p className="text-[13px] text-[#8A8D96]">(拖拽模块组装)</p>
-              </div>
-              <button type="button" className="inline-flex items-center gap-1 text-[14px] text-[#8C9199]">
-                <img src={detailClearIcon} alt="" className="h-[14px] w-[14px]" />
-                清空
-              </button>
-            </div>
-
-            <div className="mb-4 flex items-center justify-center gap-2 rounded-[16px] bg-[#D4EF2E] px-5 py-4 text-center text-[18px] font-bold shadow-[inset_0px_-2px_0px_rgba(0,0,0,0.08)]">
-              <img src={detailBannerFlagIcon} alt="" className="h-[16px] w-[16px]" />
-              上海错峰路线
-            </div>
-
-            <div className="space-y-3">
-              {modules.map((module) => (
-                <article
-                  key={module.title}
-                  className="relative flex overflow-hidden rounded-[18px] bg-[#FCFBF7] shadow-[0px_4px_12px_rgba(27,29,17,0.05)]"
+                  <img src={detailSendIcon} alt="" className="h-5 w-5" />
+                </a>
+                <a
+                  href={warningExportUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#777] shadow-[0px_8px_20px_rgba(27,29,17,0.12)]"
                 >
-                  <div className="flex w-[56px] shrink-0 items-center justify-center" style={{ backgroundColor: module.color }}>
-                    <img src={module.icon} alt="" className="h-6 w-6" />
-                  </div>
-                  <div className="absolute left-[48px] top-1/2 h-[16px] w-[16px] -translate-y-1/2 rounded-full border-[5px] border-[#F1F0E9] bg-white" />
-                  <div className="min-w-0 flex-1 px-3 py-[13px]">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h3 className="text-[15px] font-bold leading-5 text-[#27303A]">{module.title}</h3>
-                        <p className="mt-1 inline-flex items-center gap-1 text-[12px] text-[#6A707A]">
-                          <img src={detailCardTimeIcon} alt="" className="h-[14px] w-[14px]" />
-                          {module.time}
-                        </p>
-                      </div>
-                      <span
-                        className="shrink-0 rounded-full px-2 py-1 text-[10px] text-[#707769]"
-                        style={{ backgroundColor: module.tagColor }}
-                      >
-                        {module.tag}
-                      </span>
-                    </div>
-                    {module.risk ? (
-                      <a href="/travel-unpack/risk-detail" className="mt-3 inline-flex items-center gap-1 rounded-[4px] border border-[#F1B5A8] bg-[#FFE7E0] px-3 py-1 text-xs text-[#E05A4E]">
-                        <img src={detailCardRiskIcon} alt="" className="h-[12px] w-[12px]" />
-                        {module.risk}
-                      </a>
-                    ) : null}
-                  </div>
-                </article>
-              ))}
+                  <img src={detailMoreIcon} alt="" className="h-5 w-5" />
+                </a>
+              </div>
             </div>
 
-            <div className="mt-5 flex gap-3">
-              <div className="flex h-[74px] flex-1 items-center justify-center rounded-[18px] border border-dashed border-[#BCC0C9] text-[#8E93A0]">
-                ⊕ 拖 下一块正木
-              </div>
-              <div className="space-y-3">
-                <button type="button" className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#48505C] shadow-[0px_6px_16px_rgba(27,29,17,0.08)]">
-                  <GlyphPlus />
-                </button>
-                <button type="button" className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#48505C] shadow-[0px_6px_16px_rgba(27,29,17,0.08)]">
-                  <img src={detailZoomMinusIcon} alt="" className="h-4 w-4" />
-                </button>
-                <button type="button" className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#48505C] shadow-[0px_6px_16px_rgba(27,29,17,0.08)]">
-                  <img src={detailFitIcon} alt="" className="h-4 w-4" />
-                </button>
-              </div>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <StatusBadge className="bg-[#D4EF2E] text-[#1B1D11]">
+                {uploadSnapshot ? '真实上传返回' : '历史查询兜底'}
+              </StatusBadge>
+              {selectedItem ? <CategoryBadge category={selectedItem.category} /> : null}
+              {uploadSnapshot ? (
+                <StatusBadge className="bg-[#ECE9DD] text-[#535748]">
+                  status = {uploadSnapshot.status}
+                </StatusBadge>
+              ) : null}
             </div>
           </section>
-        </section>
 
-        <nav className="mt-[10px] flex rounded-[28px] bg-[#F1F0E9] px-6 py-5 shadow-[0px_8px_24px_rgba(27,29,17,0.08)]">
-          {['预览路线', '智能优化', '导出攻略', '更多设置'].map((item, index) => (
-            <a
-              key={item}
-              href="#"
-              className={`flex flex-1 flex-col items-center gap-2 text-sm ${index === 0 ? 'text-[#4D5564]' : 'text-[#697080]'}`}
-            >
-              <span className="text-xl">{['◉', '✣', '⇪', '⚙'][index]}</span>
-              {item}
-            </a>
-          ))}
-        </nav>
-        <div className="mt-[6px] flex justify-center">
-          <span className="h-[5px] w-[124px] rounded-full bg-[#1B1D11]" />
-        </div>
+          <div className="mt-4 space-y-4">
+            {loading ? (
+              <NoticeCard title="加载中" description="正在整理结构化条目与 warning 数据。" tone="neutral" />
+            ) : null}
+
+            {!loading && error ? (
+              <NoticeCard title="加载失败" description={error} tone="danger" />
+            ) : null}
+
+            {!loading && !error && uploadSnapshot ? (
+              <SectionCard>
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[22px] font-bold text-[#1B1D11]">上传返回摘要</p>
+                    <p className="mt-1 text-sm text-[#666A61]">
+                      已展示 `status`、文件信息、抽取文本、计数与结果数组
+                    </p>
+                  </div>
+                  <StatusBadge
+                    className={
+                      uploadSnapshot.saved_count > 0
+                        ? 'bg-[#DFF1B0] text-[#40501D]'
+                        : 'bg-[#FFF0CC] text-[#7C5A12]'
+                    }
+                  >
+                    {uploadSnapshot.saved_count > 0 ? '已写入新数据' : '可能全部命中去重'}
+                  </StatusBadge>
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                  <MetricCard label="file_name" value={uploadSnapshot.file_name} />
+                  <MetricCard label="file_type" value={formatFileType(uploadSnapshot.file_type)} />
+                  <MetricCard label="item_count" value={String(uploadSnapshot.item_count)} />
+                  <MetricCard label="saved_count" value={String(uploadSnapshot.saved_count)} />
+                  <MetricCard label="deduplicated_count" value={String(uploadSnapshot.deduplicated_count)} />
+                  <MetricCard label="warning_count" value={String(uploadSnapshot.warning_count)} />
+                  <MetricCard label="warning_saved_count" value={String(uploadSnapshot.warning_saved_count)} />
+                </div>
+
+                {uploadSnapshot.saved_count === 0 && uploadSnapshot.deduplicated_count > 0 ? (
+                  <div className="mt-4">
+                    <NoticeCard
+                      title="去重命中说明"
+                      description="`saved_count = 0` 不代表失败，当前更可能是识别成功但结果全部命中去重。"
+                      tone="warning"
+                    />
+                  </div>
+                ) : null}
+
+                <div className="mt-4 rounded-[18px] bg-white px-4 py-4">
+                  <p className="text-sm font-semibold text-[#1B1D11]">extracted_text</p>
+                  <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[#4D5148]">
+                    {uploadSnapshot.extracted_text || '后端未返回抽取文本。'}
+                  </p>
+                </div>
+              </SectionCard>
+            ) : null}
+
+            {!loading && !error ? (
+              <SectionCard>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[22px] font-bold text-[#1B1D11]">结构化条目</p>
+                    <p className="mt-1 text-sm text-[#666A61]">
+                      主数据源为上传返回 `items` 或 `GET /ingest/items`
+                    </p>
+                  </div>
+                  <a
+                    href={buildStructuredExportUrl('csv', {
+                      limit: 100,
+                      category: selectedItem?.category ?? '',
+                      keyword: selectedItem?.name ?? '',
+                    })}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full bg-[#E8ECF8] px-4 py-2 text-sm text-[#3F4B86]"
+                  >
+                    导出 CSV
+                  </a>
+                </div>
+
+                {uploadSnapshot?.items.length ? (
+                  <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
+                    {uploadSnapshot.items.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedItem(item)
+                          setRelatedWarnings(
+                            (uploadSnapshot.warnings || []).filter(
+                              (warning) =>
+                                warning.structured_item_id === item.id ||
+                                (warning.name === item.name && warning.category === item.category),
+                            ),
+                          )
+                          saveSelectedItem(item)
+                        }}
+                        className={`rounded-full px-4 py-2 text-sm ${
+                          selectedItem?.id === item.id ? 'bg-[#1B1D11] text-[#D4EF2E]' : 'bg-[#ECE9DD] text-[#5C6354]'
+                        }`}
+                      >
+                        {item.name}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+
+                {selectedItem ? (
+                  <div className="mt-4 rounded-[20px] bg-white p-4 shadow-[0px_6px_18px_rgba(27,29,17,0.05)]">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xl font-semibold text-[#1B1D11]">{selectedItem.name}</p>
+                        <p className="mt-1 text-sm text-[#666A61]">{selectedItem.location}</p>
+                      </div>
+                      <CategoryBadge category={selectedItem.category} />
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-[#4A4E45]">{selectedItem.summary}</p>
+                    <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-[#666A61]">
+                      <div>created_at：{formatDateTime(selectedItem.created_at)}</div>
+                      <div>updated_at：{formatDateTime(selectedItem.updated_at)}</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    <EmptyState
+                      title="暂无可展示条目"
+                      description="当前没有上传快照，也没有查询到历史结构化结果。"
+                    />
+                  </div>
+                )}
+              </SectionCard>
+            ) : null}
+
+            {!loading && !error ? (
+              <SectionCard>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[22px] font-bold text-[#1B1D11]">关联 warning</p>
+                    <p className="mt-1 text-sm text-[#666A61]">
+                      主数据源为上传返回 `warnings` 或 `GET /ingest/warnings`
+                    </p>
+                  </div>
+                  <a
+                    href={buildWarningExportUrl('csv', {
+                      limit: 100,
+                      category: selectedItem?.category ?? '',
+                      keyword: selectedItem?.name ?? '',
+                    })}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full bg-[#FDE8E2] px-4 py-2 text-sm text-[#B84D39]"
+                  >
+                    导出 CSV
+                  </a>
+                </div>
+
+                {relatedWarnings.length ? (
+                  <div className="mt-4 space-y-3">
+                    {relatedWarnings.map((warning) => (
+                      <a
+                        key={warning.id}
+                        href={`/travel-unpack/risk-detail?warningId=${warning.id}`}
+                        onClick={() => saveSelectedWarning(warning)}
+                        className="block rounded-[18px] bg-white p-4 shadow-[0px_6px_18px_rgba(27,29,17,0.05)]"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-lg font-semibold text-[#1B1D11]">{warning.name}</p>
+                            <p className="mt-1 text-sm text-[#666A61]">{warning.warning_summary}</p>
+                          </div>
+                          <StatusBadge className="bg-[#FDE8E2] text-[#B84D39]">
+                            {warning.matched_by}
+                          </StatusBadge>
+                        </div>
+                        <p className="mt-3 text-xs text-[#8A8D84]">
+                          updated_at：{formatDateTime(warning.updated_at)}
+                        </p>
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    <EmptyState
+                      title="暂无关联 warning"
+                      description="当前条目没有命中 warning，或历史查询结果为空。"
+                    />
+                  </div>
+                )}
+              </SectionCard>
+            ) : null}
+          </div>
         </div>
       </DeviceScrollView>
     </DeviceShell>
   )
 }
 
-function indexPlaceholder() {
+function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-center rounded-[14px] border border-dashed border-[#A8ADB8] px-3 py-4 text-[15px] text-[#868C98]">
-      + 添加自形◌模块
+    <div className="rounded-[18px] bg-white px-4 py-3 shadow-[0px_4px_12px_rgba(27,29,17,0.04)]">
+      <p className="text-[11px] uppercase tracking-[0.12em] text-[#8A8D82]">{label}</p>
+      <p className="mt-2 break-all text-[13px] font-medium text-[#1B1D11]">{value}</p>
     </div>
   )
 }

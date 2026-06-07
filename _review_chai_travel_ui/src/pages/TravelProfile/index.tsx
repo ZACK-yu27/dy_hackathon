@@ -31,6 +31,7 @@ import profileStatsProjectIcon from '../../assets/icons/figma-deep/profile-stats
 import profileTagFoodIcon from '../../assets/icons/figma-deep/profile-tag-food.svg'
 import profileTagSightIcon from '../../assets/icons/figma-deep/profile-tag-sight.svg'
 import profileTagTransportIcon from '../../assets/icons/figma-deep/profile-tag-transport.svg'
+import { StaticPlaceholderTag } from '../../components/BusinessUi'
 import { DeviceScrollView, DeviceShell, SectionHeading } from '../../components/TravelUi'
 import { Header } from '../TravelUnpack/components/Header'
 import { SearchBar } from '../TravelUnpack/components/SearchBar'
@@ -38,7 +39,7 @@ import { SearchBar } from '../TravelUnpack/components/SearchBar'
 const shelfItems = [
   { title: '景点｜外滩', risk: '晚高峰人多', color: '#4B8BEE', icon: profileCard2TagSightIcon, more: profileModule1MoreIcon, riskIcon: profileModule1RiskIcon },
   { title: '住宿｜XX 酒店', risk: '隔音差', color: '#7F8AAD', icon: profileModule2Icon, more: profileModule2MoreIcon, riskIcon: profileModule2RiskIcon },
-  { title: '餐饮｜本地小馆', risk: '饭点排队', color: '#3DB39B', icon: profileModule3Icon, more: profileModule3MoreIcon, riskIcon: profileModule3RiskIcon },
+  { title: '饮食｜本地小馆', risk: '饭点排队', color: '#3DB39B', icon: profileModule3Icon, more: profileModule3MoreIcon, riskIcon: profileModule3RiskIcon },
   { title: '交通｜地铁 2 号', risk: '换乘耗时', color: '#79B24A', icon: profileModule4Icon, more: profileModule4MoreIcon, riskIcon: profileModule4RiskIcon },
 ]
 
@@ -56,6 +57,7 @@ export default function TravelProfilePage() {
         <SearchBar placeholder="搜索我的项目 / 草稿 / 收藏模块" href="/travel-unpack/profile" />
 
         <div className="px-5 pt-5">
+        <StaticPlaceholderTag />
 
         <section className="relative mt-5 overflow-hidden rounded-[24px] bg-[#D4EF2E] p-5 shadow-[0px_12px_28px_rgba(27,29,17,0.06)]">
           <img src={profileGreenPattern} alt="" className="pointer-events-none absolute right-[22px] top-[110px] h-4 w-16 opacity-80" />
@@ -126,7 +128,7 @@ export default function TravelProfilePage() {
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-[4px] bg-[#DDF0D4] px-3 py-1 text-xs text-[#6A8E20]">
                   <img src={profileTagFoodIcon} alt="" className="h-[12px] w-[12px]" />
-                  餐饮
+                  饮食
                 </span>
               </div>
             </a>
@@ -182,7 +184,7 @@ export default function TravelProfilePage() {
               <div className="flex gap-4">
                 <span>景点</span>
                 <span>交通</span>
-                <span>餐饮 ↔</span>
+                <span>饮食 ↔</span>
               </div>
               <a href="/travel-unpack/detail" className="inline-flex items-center gap-1 rounded-full bg-[#111] px-4 py-2 text-white">
                 继续编辑

@@ -22,13 +22,14 @@ import exploreSecondaryTagTransportIcon from '../../assets/icons/figma-deep/expl
 import exploreTagFoodIcon from '../../assets/icons/figma-deep/explore-tag-food.svg'
 import exploreTagSightIcon from '../../assets/icons/figma-deep/explore-tag-sight.svg'
 import exploreTagTransportIcon from '../../assets/icons/figma-deep/explore-tag-transport.svg'
+import { StaticPlaceholderTag } from '../../components/BusinessUi'
 import { DeviceScrollView, DeviceShell, SectionHeading } from '../../components/TravelUi'
 import { Header } from '../TravelUnpack/components/Header'
 import { SearchBar } from '../TravelUnpack/components/SearchBar'
 
 const hotRoutes = [
-  { title: '少排队外滩路线', subtitle: '避开 18:00-20:00 高峰', tags: [{ label: '景点' }, { label: '交通' }, { label: '餐饮' }], risk: '人流高峰', color: '#4B8BEE', icon: exploreListSightIcon, riskIcon: exploreListRiskIcon, moreIcon: exploreListMoreIcon },
-  { title: '避开网红餐厅排队路线', subtitle: '饭点后出行更省心', tags: [{ label: '餐饮' }, { label: '交通' }], risk: '饭点排队', color: '#5EC2B4', icon: exploreListFoodIcon, riskIcon: exploreListRiskQueueIcon, moreIcon: exploreListMore2Icon },
+  { title: '少排队外滩路线', subtitle: '避开 18:00-20:00 高峰', tags: [{ label: '景点' }, { label: '交通' }, { label: '饮食' }], risk: '人流高峰', color: '#4B8BEE', icon: exploreListSightIcon, riskIcon: exploreListRiskIcon, moreIcon: exploreListMoreIcon },
+  { title: '避开网红餐厅排队路线', subtitle: '饭点后出行更省心', tags: [{ label: '饮食' }, { label: '交通' }], risk: '饭点排队', color: '#5EC2B4', icon: exploreListFoodIcon, riskIcon: exploreListRiskQueueIcon, moreIcon: exploreListMore2Icon },
 ]
 
 const ranking = [
@@ -45,6 +46,7 @@ export default function TravelExplorePage() {
         <SearchBar placeholder="搜索城市 / 景点 / 避雷关键词" href="/travel-unpack/explore" />
 
         <div className="px-5 pt-6">
+        <StaticPlaceholderTag />
 
         <div className="mt-6 grid grid-cols-3 gap-3">
           {[
@@ -81,7 +83,7 @@ export default function TravelExplorePage() {
                 {[
                   ['景点', exploreTagSightIcon],
                   ['交通', exploreTagTransportIcon],
-                  ['餐饮', exploreTagFoodIcon],
+                  ['饮食', exploreTagFoodIcon],
                 ].map(([tag, icon]) => (
                   <span key={tag} className="inline-flex items-center gap-1 rounded-[6px] bg-[#3C87E7] px-3 py-1 text-xs text-white">
                     <img src={icon} alt="" className="h-[12px] w-[12px]" />
@@ -190,7 +192,7 @@ export default function TravelExplorePage() {
           <SectionHeading title="可复制项目模板" />
           <div className="mt-4 grid grid-cols-3 gap-3">
             {[
-              ['城市一日错峰模板', '景点 × 交通', '餐饮 × 景点'],
+              ['城市一日错峰模板', '景点 × 交通', '饮食 × 景点'],
               ['周末轻行模板', '住宿场景', '缺省夜景'],
               ['多人出行模板', '交通避让', '风险提醒'],
             ].map(([title, line1, line2]) => (

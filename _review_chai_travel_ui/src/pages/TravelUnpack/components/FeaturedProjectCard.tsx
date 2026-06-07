@@ -11,7 +11,7 @@ import riskCountIcon from '../../../assets/icons/risk-count.svg'
 const categories = [
   { label: '景点', icon: pillScenicIcon, backgroundColor: '#5C88C4' },
   { label: '交通', icon: pillTrafficIcon, backgroundColor: '#59A59B' },
-  { label: '餐饮', icon: pillFoodIcon, backgroundColor: '#8CAEB6' },
+  { label: '饮食', icon: pillFoodIcon, backgroundColor: '#8CAEB6' },
 ]
 
 const chips = [
