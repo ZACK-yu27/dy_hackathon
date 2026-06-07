@@ -1,0 +1,44 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# Env files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node / frontend build artifacts
+**/node_modules/
+**/dist/
+**/.vite/
+**/.tmp/
+**/*.tsbuildinfo
+
+# Runtime artifacts
+ocr-service/artifacts/
+
+# Archives
+*.zip
+*.7z
+*.tar
+*.gz
+
+# Temporary files
+*.tmp
+*.temp
