@@ -73,11 +73,7 @@ VITE_MAX_UPLOAD_MB=50
 ### 已真实接入
 
 - `/travel-unpack`
-  - 启动后自动健康检查
-  - 历史结构化结果查询
-  - 历史 warning 查询
-  - 分类筛选与关键词检索
-  - JSON / CSV 导出
+  - 保留原设计稿首页视觉
 - `/travel-unpack/new-project`
   - 单文件上传
   - `multipart/form-data`
