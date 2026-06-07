@@ -1,0 +1,1247 @@
+{
+  "printed_text_image_result": {
+    "status": "success",
+    "file_name": "printed_text.png",
+    "file_type": "image",
+    "language": "chi_sim+eng",
+    "elapsed_ms": 1043,
+    "page_count": 1,
+    "pages": [
+      {
+        "page_number": 1,
+        "text": "OCR Printed Text Sample / 常规 印刷 体 测试\n城市 City: 上 海 shanghai\n景点 Spot: 外 淮 The Bund\n交通 Route: Metro Line 2 to East Nanjing Road\n住宿 Hotel: People Square Business Hotel\n饮食 Dining: Crab Soup Dumpling\n预算 Budget: RMB 120 per person\n提醒 Reminder: Avoid weekend crowd\niBS Language: #3Z English",
+        "lines": [
+          {
+            "text": "OCR Printed Text Sample / 常规 印刷 体 测试",
+            "score": 0.9411,
+            "bbox": [
+              [
+                103.0,
+                92.0
+              ],
+              [
+                1141.0,
+                92.0
+              ],
+              [
+                1141.0,
+                149.0
+              ],
+              [
+                103.0,
+                149.0
+              ]
+            ]
+          },
+          {
+            "text": "城市 City: 上 海 shanghai",
+            "score": 0.906,
+            "bbox": [
+              [
+                100.0,
+                205.0
+              ],
+              [
+                527.0,
+                205.0
+              ],
+              [
+                527.0,
+                260.0
+              ],
+              [
+                100.0,
+                260.0
+              ]
+            ]
+          },
+          {
+            "text": "景点 Spot: 外 淮 The Bund",
+            "score": 0.9067,
+            "bbox": [
+              [
+                102.0,
+                310.0
+              ],
+              [
+                547.0,
+                310.0
+              ],
+              [
+                547.0,
+                361.0
+              ],
+              [
+                102.0,
+                361.0
+              ]
+            ]
+          },
+          {
+            "text": "交通 Route: Metro Line 2 to East Nanjing Road",
+            "score": 0.9367,
+            "bbox": [
+              [
+                101.0,
+                419.0
+              ],
+              [
+                935.0,
+                419.0
+              ],
+              [
+                935.0,
+                460.0
+              ],
+              [
+                101.0,
+                460.0
+              ]
+            ]
+          },
+          {
+            "text": "住宿 Hotel: People Square Business Hotel",
+            "score": 0.935,
+            "bbox": [
+              [
+                101.0,
+                523.0
+              ],
+              [
+                843.0,
+                523.0
+              ],
+              [
+                843.0,
+                565.0
+              ],
+              [
+                101.0,
+                565.0
+              ]
+            ]
+          },
+          {
+            "text": "饮食 Dining: Crab Soup Dumpling",
+            "score": 0.906,
+            "bbox": [
+              [
+                101.0,
+                630.0
+              ],
+              [
+                702.0,
+                630.0
+              ],
+              [
+                702.0,
+                670.0
+              ],
+              [
+                101.0,
+                670.0
+              ]
+            ]
+          },
+          {
+            "text": "预算 Budget: RMB 120 per person",
+            "score": 0.9217,
+            "bbox": [
+              [
+                101.0,
+                734.0
+              ],
+              [
+                708.0,
+                734.0
+              ],
+              [
+                708.0,
+                775.0
+              ],
+              [
+                101.0,
+                775.0
+              ]
+            ]
+          },
+          {
+            "text": "提醒 Reminder: Avoid weekend crowd",
+            "score": 0.932,
+            "bbox": [
+              [
+                101.0,
+                840.0
+              ],
+              [
+                784.0,
+                840.0
+              ],
+              [
+                784.0,
+                876.0
+              ],
+              [
+                101.0,
+                876.0
+              ]
+            ]
+          },
+          {
+            "text": "iBS Language: #3Z English",
+            "score": 0.6925,
+            "bbox": [
+              [
+                101.0,
+                942.0
+              ],
+              [
+                599.0,
+                942.0
+              ],
+              [
+                599.0,
+                985.0
+              ],
+              [
+                101.0,
+                985.0
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "warnings": [],
+    "http_status": 200,
+    "request_elapsed_ms": 1055
+  },
+  "printed_text_pdf_result": {
+    "status": "success",
+    "file_name": "printed_text.pdf",
+    "file_type": "pdf",
+    "language": "chi_sim+eng",
+    "elapsed_ms": 907,
+    "page_count": 1,
+    "pages": [
+      {
+        "page_number": 1,
+        "text": "景点 Spot: 外 滩 The Bund\n交通 Route: Metro Line 2 to East Nanjing Road\n住宿 Hotel: People Square Business Hotel\n饮食 Dining: Crab Soup Dumpling\n预算 Budget: RMB 120 per person\n提醒 Reminder: Avoid weekend crowd\n语言 Language: XZ English",
+        "lines": [
+          {
+            "text": "景点 Spot: 外 滩 The Bund",
+            "score": 0.8267,
+            "bbox": [
+              [
+                193.0,
+                50.0
+              ],
+              [
+                550.0,
+                50.0
+              ],
+              [
+                550.0,
+                93.0
+              ],
+              [
+                193.0,
+                93.0
+              ]
+            ]
+          },
+          {
+            "text": "交通 Route: Metro Line 2 to East Nanjing Road",
+            "score": 0.9389,
+            "bbox": [
+              [
+                192.0,
+                138.0
+              ],
+              [
+                862.0,
+                138.0
+              ],
+              [
+                862.0,
+                170.0
+              ],
+              [
+                192.0,
+                170.0
+              ]
+            ]
+          },
+          {
+            "text": "住宿 Hotel: People Square Business Hotel",
+            "score": 0.925,
+            "bbox": [
+              [
+                192.0,
+                221.0
+              ],
+              [
+                788.0,
+                221.0
+              ],
+              [
+                788.0,
+                255.0
+              ],
+              [
+                192.0,
+                255.0
+              ]
+            ]
+          },
+          {
+            "text": "饮食 Dining: Crab Soup Dumpling",
+            "score": 0.91,
+            "bbox": [
+              [
+                192.0,
+                307.0
+              ],
+              [
+                675.0,
+                307.0
+              ],
+              [
+                675.0,
+                339.0
+              ],
+              [
+                192.0,
+                339.0
+              ]
+            ]
+          },
+          {
+            "text": "预算 Budget: RMB 120 per person",
+            "score": 0.9133,
+            "bbox": [
+              [
+                192.0,
+                390.0
+              ],
+              [
+                679.0,
+                390.0
+              ],
+              [
+                679.0,
+                423.0
+              ],
+              [
+                192.0,
+                423.0
+              ]
+            ]
+          },
+          {
+            "text": "提醒 Reminder: Avoid weekend crowd",
+            "score": 0.952,
+            "bbox": [
+              [
+                192.0,
+                476.0
+              ],
+              [
+                740.0,
+                476.0
+              ],
+              [
+                740.0,
+                505.0
+              ],
+              [
+                192.0,
+                505.0
+              ]
+            ]
+          },
+          {
+            "text": "语言 Language: XZ English",
+            "score": 0.775,
+            "bbox": [
+              [
+                192.0,
+                558.0
+              ],
+              [
+                592.0,
+                558.0
+              ],
+              [
+                592.0,
+                592.0
+              ],
+              [
+                192.0,
+                592.0
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "warnings": [],
+    "http_status": 200,
+    "request_elapsed_ms": 913
+  },
+  "complex_layout_image_result": {
+    "status": "success",
+    "file_name": "mixed_layout.png",
+    "file_type": "image",
+    "language": "chi_sim+eng",
+    "elapsed_ms": 1000,
+    "page_count": 1,
+    "pages": [
+      {
+        "page_number": 1,
+        "text": "OCR Mixed Layout Test\n旅游 攻略 识别 样 例 / Travel Plan Sample\n景点 Spot: YN The Bund\n交通 Route: Metro Line 2 -> East Nanjing Road\n{£44 Hotel: People Square Business Hotel\n‘RB Dining: 4RY + crab soup dumpling\nZF Notes\n1. 早上 09:00 到 达 景 点 Type\nValue\n2. Lunch budget: RMB 80\nPOI\n3. Avoid weekend crowd\nTime\nLanguage\n南京 路 步行 街\n1\nq\n4:00 - 17:00\nHZ + English",
+        "lines": [
+          {
+            "text": "OCR Mixed Layout Test",
+            "score": 0.92,
+            "bbox": [
+              [
+                82.0,
+                81.0
+              ],
+              [
+                569.0,
+                81.0
+              ],
+              [
+                569.0,
+                128.0
+              ],
+              [
+                82.0,
+                128.0
+              ]
+            ]
+          },
+          {
+            "text": "旅游 攻略 识别 样 例 / Travel Plan Sample",
+            "score": 0.9411,
+            "bbox": [
+              [
+                81.0,
+                156.0
+              ],
+              [
+                621.0,
+                156.0
+              ],
+              [
+                621.0,
+                189.0
+              ],
+              [
+                81.0,
+                189.0
+              ]
+            ]
+          },
+          {
+            "text": "景点 Spot: YN The Bund",
+            "score": 0.738,
+            "bbox": [
+              [
+                82.0,
+                266.0
+              ],
+              [
+                433.0,
+                266.0
+              ],
+              [
+                433.0,
+                299.0
+              ],
+              [
+                82.0,
+                299.0
+              ]
+            ]
+          },
+          {
+            "text": "交通 Route: Metro Line 2 -> East Nanjing Road",
+            "score": 0.9533,
+            "bbox": [
+              [
+                81.0,
+                327.0
+              ],
+              [
+                746.0,
+                327.0
+              ],
+              [
+                746.0,
+                359.0
+              ],
+              [
+                81.0,
+                359.0
+              ]
+            ]
+          },
+          {
+            "text": "{£44 Hotel: People Square Business Hotel",
+            "score": 0.875,
+            "bbox": [
+              [
+                80.0,
+                386.0
+              ],
+              [
+                664.0,
+                386.0
+              ],
+              [
+                664.0,
+                419.0
+              ],
+              [
+                80.0,
+                419.0
+              ]
+            ]
+          },
+          {
+            "text": "‘RB Dining: 4RY + crab soup dumpling",
+            "score": 0.8643,
+            "bbox": [
+              [
+                80.0,
+                447.0
+              ],
+              [
+                644.0,
+                447.0
+              ],
+              [
+                644.0,
+                479.0
+              ],
+              [
+                80.0,
+                479.0
+              ]
+            ]
+          },
+          {
+            "text": "ZF Notes",
+            "score": 0.745,
+            "bbox": [
+              [
+                111.0,
+                577.0
+              ],
+              [
+                263.0,
+                577.0
+              ],
+              [
+                263.0,
+                606.0
+              ],
+              [
+                111.0,
+                606.0
+              ]
+            ]
+          },
+          {
+            "text": "1. 早上 09:00 到 达 景 点 Type",
+            "score": 0.9238,
+            "bbox": [
+              [
+                112.0,
+                646.0
+              ],
+              [
+                925.0,
+                646.0
+              ],
+              [
+                925.0,
+                682.0
+              ],
+              [
+                112.0,
+                682.0
+              ]
+            ]
+          },
+          {
+            "text": "Value",
+            "score": 0.96,
+            "bbox": [
+              [
+                1090.0,
+                657.0
+              ],
+              [
+                1153.0,
+                657.0
+              ],
+              [
+                1153.0,
+                676.0
+              ],
+              [
+                1090.0,
+                676.0
+              ]
+            ]
+          },
+          {
+            "text": "2. Lunch budget: RMB 80",
+            "score": 0.916,
+            "bbox": [
+              [
+                111.0,
+                707.0
+              ],
+              [
+                397.0,
+                707.0
+              ],
+              [
+                397.0,
+                732.0
+              ],
+              [
+                111.0,
+                732.0
+              ]
+            ]
+          },
+          {
+            "text": "POI",
+            "score": 0.89,
+            "bbox": [
+              [
+                872.0,
+                738.0
+              ],
+              [
+                910.0,
+                738.0
+              ],
+              [
+                910.0,
+                756.0
+              ],
+              [
+                872.0,
+                756.0
+              ]
+            ]
+          },
+          {
+            "text": "3. Avoid weekend crowd",
+            "score": 0.9025,
+            "bbox": [
+              [
+                112.0,
+                767.0
+              ],
+              [
+                389.0,
+                767.0
+              ],
+              [
+                389.0,
+                786.0
+              ],
+              [
+                112.0,
+                786.0
+              ]
+            ]
+          },
+          {
+            "text": "Time",
+            "score": 0.92,
+            "bbox": [
+              [
+                870.0,
+                797.0
+              ],
+              [
+                925.0,
+                797.0
+              ],
+              [
+                925.0,
+                816.0
+              ],
+              [
+                870.0,
+                816.0
+              ]
+            ]
+          },
+          {
+            "text": "Language",
+            "score": 0.9,
+            "bbox": [
+              [
+                872.0,
+                858.0
+              ],
+              [
+                981.0,
+                858.0
+              ],
+              [
+                981.0,
+                882.0
+              ],
+              [
+                872.0,
+                882.0
+              ]
+            ]
+          },
+          {
+            "text": "南京 路 步行 街",
+            "score": 0.94,
+            "bbox": [
+              [
+                1091.0,
+                732.0
+              ],
+              [
+                1239.0,
+                732.0
+              ],
+              [
+                1239.0,
+                771.0
+              ],
+              [
+                1091.0,
+                771.0
+              ]
+            ]
+          },
+          {
+            "text": "1",
+            "score": 0.96,
+            "bbox": [
+              [
+                1092.0,
+                798.0
+              ],
+              [
+                1099.0,
+                798.0
+              ],
+              [
+                1099.0,
+                816.0
+              ],
+              [
+                1092.0,
+                816.0
+              ]
+            ]
+          },
+          {
+            "text": "q",
+            "score": 0.92,
+            "bbox": [
+              [
+                1092.0,
+                861.0
+              ],
+              [
+                1101.0,
+                861.0
+              ],
+              [
+                1101.0,
+                872.0
+              ],
+              [
+                1092.0,
+                872.0
+              ]
+            ]
+          },
+          {
+            "text": "4:00 - 17:00",
+            "score": 0.94,
+            "bbox": [
+              [
+                1104.0,
+                798.0
+              ],
+              [
+                1237.0,
+                798.0
+              ],
+              [
+                1237.0,
+                816.0
+              ],
+              [
+                1104.0,
+                816.0
+              ]
+            ]
+          },
+          {
+            "text": "HZ + English",
+            "score": 0.7433,
+            "bbox": [
+              [
+                1103.0,
+                855.0
+              ],
+              [
+                1249.0,
+                855.0
+              ],
+              [
+                1249.0,
+                882.0
+              ],
+              [
+                1103.0,
+                882.0
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "warnings": [],
+    "http_status": 200,
+    "request_elapsed_ms": 1004
+  },
+  "complex_layout_pdf_result": {
+    "status": "success",
+    "file_name": "mixed_layout.pdf",
+    "file_type": "pdf",
+    "language": "chi_sim+eng",
+    "elapsed_ms": 1598,
+    "page_count": 2,
+    "pages": [
+      {
+        "page_number": 1,
+        "text": "交通 Route: Metro Line 2 -> East Nanjing Road\n住宿 Hotel: People Square Business Hotel\n饮食 Dining: RY + crab soup dumpling\nZet= Notes\n1. 早上 09:00 到 达 景 点\n2. Lunch budget: RMB 80\n3. Avoid weekend crowd\niE Table\nType Value\nPO! 南京 路 步行 街\nTime 14:00 - 17:00\nLanguage 中 文 + English",
+        "lines": [
+          {
+            "text": "交通 Route: Metro Line 2 -> East Nanjing Road",
+            "score": 0.9378,
+            "bbox": [
+              [
+                184.0,
+                8.0
+              ],
+              [
+                785.0,
+                8.0
+              ],
+              [
+                785.0,
+                37.0
+              ],
+              [
+                184.0,
+                37.0
+              ]
+            ]
+          },
+          {
+            "text": "住宿 Hotel: People Square Business Hotel",
+            "score": 0.93,
+            "bbox": [
+              [
+                184.0,
+                61.0
+              ],
+              [
+                711.0,
+                61.0
+              ],
+              [
+                711.0,
+                91.0
+              ],
+              [
+                184.0,
+                91.0
+              ]
+            ]
+          },
+          {
+            "text": "饮食 Dining: RY + crab soup dumpling",
+            "score": 0.8486,
+            "bbox": [
+              [
+                183.0,
+                116.0
+              ],
+              [
+                692.0,
+                116.0
+              ],
+              [
+                692.0,
+                145.0
+              ],
+              [
+                183.0,
+                145.0
+              ]
+            ]
+          },
+          {
+            "text": "Zet= Notes",
+            "score": 0.635,
+            "bbox": [
+              [
+                211.0,
+                234.0
+              ],
+              [
+                348.0,
+                234.0
+              ],
+              [
+                348.0,
+                260.0
+              ],
+              [
+                211.0,
+                260.0
+              ]
+            ]
+          },
+          {
+            "text": "1. 早上 09:00 到 达 景 点",
+            "score": 0.92,
+            "bbox": [
+              [
+                212.0,
+                296.0
+              ],
+              [
+                433.0,
+                296.0
+              ],
+              [
+                433.0,
+                317.0
+              ],
+              [
+                212.0,
+                317.0
+              ]
+            ]
+          },
+          {
+            "text": "2. Lunch budget: RMB 80",
+            "score": 0.96,
+            "bbox": [
+              [
+                211.0,
+                351.0
+              ],
+              [
+                470.0,
+                351.0
+              ],
+              [
+                470.0,
+                374.0
+              ],
+              [
+                211.0,
+                374.0
+              ]
+            ]
+          },
+          {
+            "text": "3. Avoid weekend crowd",
+            "score": 0.96,
+            "bbox": [
+              [
+                212.0,
+                405.0
+              ],
+              [
+                463.0,
+                405.0
+              ],
+              [
+                463.0,
+                423.0
+              ],
+              [
+                212.0,
+                423.0
+              ]
+            ]
+          },
+          {
+            "text": "iE Table",
+            "score": 0.495,
+            "bbox": [
+              [
+                898.0,
+                234.0
+              ],
+              [
+                1029.0,
+                234.0
+              ],
+              [
+                1029.0,
+                260.0
+              ],
+              [
+                898.0,
+                260.0
+              ]
+            ]
+          },
+          {
+            "text": "Type Value",
+            "score": 0.96,
+            "bbox": [
+              [
+                897.0,
+                306.0
+              ],
+              [
+                1152.0,
+                306.0
+              ],
+              [
+                1152.0,
+                329.0
+              ],
+              [
+                897.0,
+                329.0
+              ]
+            ]
+          },
+          {
+            "text": "PO! 南京 路 步行 街",
+            "score": 0.848,
+            "bbox": [
+              [
+                899.0,
+                373.0
+              ],
+              [
+                1230.0,
+                373.0
+              ],
+              [
+                1230.0,
+                409.0
+              ],
+              [
+                899.0,
+                409.0
+              ]
+            ]
+          },
+          {
+            "text": "Time 14:00 - 17:00",
+            "score": 0.915,
+            "bbox": [
+              [
+                897.0,
+                433.0
+              ],
+              [
+                1228.0,
+                433.0
+              ],
+              [
+                1228.0,
+                450.0
+              ],
+              [
+                897.0,
+                450.0
+              ]
+            ]
+          },
+          {
+            "text": "Language 中 文 + English",
+            "score": 0.928,
+            "bbox": [
+              [
+                899.0,
+                481.0
+              ],
+              [
+                1239.0,
+                481.0
+              ],
+              [
+                1239.0,
+                515.0
+              ],
+              [
+                899.0,
+                515.0
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "page_number": 2,
+        "text": "Page 2 / 第 二 页\nHotel check-in: 15:00\n| JE Ticket: 成 人 120 元\nReminder: Keep passport / ID ready.",
+        "lines": [
+          {
+            "text": "Page 2 / 第 二 页",
+            "score": 0.93,
+            "bbox": [
+              [
+                115.0,
+                130.0
+              ],
+              [
+                433.0,
+                130.0
+              ],
+              [
+                433.0,
+                178.0
+              ],
+              [
+                115.0,
+                178.0
+              ]
+            ]
+          },
+          {
+            "text": "Hotel check-in: 15:00",
+            "score": 0.8567,
+            "bbox": [
+              [
+                115.0,
+                228.0
+              ],
+              [
+                557.0,
+                228.0
+              ],
+              [
+                557.0,
+                265.0
+              ],
+              [
+                115.0,
+                265.0
+              ]
+            ]
+          },
+          {
+            "text": "| JE Ticket: 成 人 120 元",
+            "score": 0.8586,
+            "bbox": [
+              [
+                115.0,
+                318.0
+              ],
+              [
+                600.0,
+                318.0
+              ],
+              [
+                600.0,
+                374.0
+              ],
+              [
+                115.0,
+                374.0
+              ]
+            ]
+          },
+          {
+            "text": "Reminder: Keep passport / ID ready.",
+            "score": 0.9467,
+            "bbox": [
+              [
+                115.0,
+                415.0
+              ],
+              [
+                878.0,
+                415.0
+              ],
+              [
+                878.0,
+                474.0
+              ],
+              [
+                115.0,
+                474.0
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "warnings": [],
+    "http_status": 200,
+    "request_elapsed_ms": 1602
+  },
+  "printed_text_expected_terms": [
+    "上海 Shanghai",
+    "外滩 The Bund",
+    "The Bund",
+    "Metro Line 2",
+    "People Square Business Hotel",
+    "Crab Soup Dumpling",
+    "RMB 120 per person",
+    "Avoid weekend crowd"
+  ],
+  "printed_text_matched_terms": [
+    "上海 Shanghai",
+    "外滩 The Bund",
+    "The Bund",
+    "Metro Line 2",
+    "People Square Business Hotel",
+    "Crab Soup Dumpling",
+    "RMB 120 per person",
+    "Avoid weekend crowd"
+  ],
+  "printed_text_matched_count": 8,
+  "printed_text_expected_count": 8,
+  "printed_text_accuracy_percent": 100.0,
+  "complex_layout_expected_terms": [
+    "The Bund",
+    "Metro Line 2",
+    "People Square Business Hotel",
+    "crab soup dumpling",
+    "中文 + English"
+  ],
+  "complex_layout_matched_terms": [
+    "The Bund",
+    "Metro Line 2",
+    "People Square Business Hotel",
+    "crab soup dumpling",
+    "中文 + English"
+  ],
+  "complex_layout_matched_count": 5,
+  "complex_layout_expected_count": 5,
+  "complex_layout_match_rate_percent": 100.0,
+  "printed_text_passed": true
+}

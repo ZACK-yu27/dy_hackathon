@@ -1,73 +1,85 @@
-# React + TypeScript + Vite
+# Travel App Monorepo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository is organized as a reviewable full-stack travel app workspace.
 
-Currently, two official plugins are available:
+It contains:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- a production-oriented frontend app in `_review_chai_travel_ui/`
+- a working backend service in `ocr-service/`
+- supporting product and integration documents in `docs/`
+- archived prototypes and snapshots in `archive/`
+- external reference material in `third_party/`
+- local sample files for upload testing in `mock_pics/`
 
-## React Compiler
+## Repository Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+dy-hackathon/
+├─ _review_chai_travel_ui/   # primary frontend app
+├─ ocr-service/             # primary backend service
+├─ docs/                    # delivery, integration, and product docs
+├─ archive/                 # deprecated prototypes and zip snapshots
+├─ third_party/             # external reference resources
+├─ mock_pics/               # local upload test samples
+└─ API_keys.md              # local developer key source, do not commit secrets
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Canonical Applications
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Frontend
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Path: `_review_chai_travel_ui/`
+- Stack: React 19, TypeScript, Vite, Tailwind CSS 4
+- Purpose: business delivery frontend connected to the live backend API
+
+### Backend
+
+- Path: `ocr-service/`
+- Stack: FastAPI, SQLAlchemy, MySQL, Tesseract OCR, DeepSeek
+- Purpose: upload, OCR extraction, structuring, deduplication, warning matching, export
+
+## Archived Resources
+
+The `archive/` directory keeps non-primary materials for traceability:
+
+- earlier frontend prototype branches
+- H5 demo prototypes
+- zip snapshots
+
+These are preserved for reference and should not be treated as the main delivery target.
+
+## Documents
+
+Project and delivery documents are grouped under `docs/`:
+
+- frontend delivery requirements
+- frontend development spec
+- frontend integration delivery
+- frontend/backend integration plan
+- product and page-planning documents
+- internal test report
+
+## Local Setup
+
+### Frontend
+
+```bash
+cd _review_chai_travel_ui
+npm install
+npm run dev
 ```
+
+### Backend
+
+```powershell
+cd ocr-service
+python -m venv .venv
+.\.venv\Scripts\python -m pip install -e .[dev]
+Copy-Item .env.example .env
+.\.venv\Scripts\python -m uvicorn app.main:app --host 0.0.0.0 --port 8011
+```
+
+## Review Notes
+
+- Generated artifacts such as `node_modules`, `dist`, `.vite`, logs, and runtime uploads should not be committed.
+- Root-level structure is intentionally kept stable so the backend can continue reading `API_keys.md` and local test assets without code changes.
